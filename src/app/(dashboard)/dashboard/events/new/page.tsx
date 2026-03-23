@@ -267,7 +267,7 @@ export default function CreateEventPage() {
             name="title"
             value={form.title}
             onChange={(e) => updateForm({ title: e.target.value })}
-            placeholder="e.g. Aadhya's Cradle Ceremony"
+            placeholder="e.g. Baby's Cradle Ceremony"
             required
           />
           <Input

@@ -74,7 +74,7 @@ export default function LoginPage() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-burgundy to-burgundy-light flex items-center justify-center">
               <span className="text-white font-display font-bold text-sm">A</span>
             </div>
-            <span className="font-display text-xl font-bold text-charcoal">Aadhya</span>
+            <span className="font-display text-xl font-bold text-charcoal">FirstPower RSVP</span>
           </Link>
 
           <h1 className="font-display text-2xl font-bold text-charcoal">Sign In</h1>

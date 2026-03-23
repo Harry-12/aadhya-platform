@@ -131,7 +131,7 @@ export default function LandingPage() {
                 <PaisleyBorder position="top" className="mb-6" />
                 <p className="text-gold-muted text-sm uppercase tracking-widest mb-2">You are cordially invited to</p>
                 <h2 className="font-display text-3xl sm:text-4xl font-bold text-burgundy">
-                  Aadhya&apos;s Cradle Ceremony
+                  Baby&apos;s Cradle Ceremony
                 </h2>
                 <p className="text-gold-muted mt-1">&amp; Housewarming</p>
                 <div className="mt-6 flex justify-center gap-6 text-sm text-charcoal-light">
@@ -399,7 +399,7 @@ export default function LandingPage() {
             Ready to Create Something Beautiful?
           </h2>
           <p className="mt-4 text-white/80 text-lg">
-            Join thousands of hosts who trust Aadhya for their special celebrations.
+            Join thousands of hosts who trust FirstPower RSVP for their special celebrations.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/signup">
@@ -424,14 +424,14 @@ export default function LandingPage() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-burgundy to-burgundy-light flex items-center justify-center">
                 <span className="text-white font-display font-bold text-sm">A</span>
               </div>
-              <span className="font-display text-xl font-bold text-white">Aadhya</span>
+              <span className="font-display text-xl font-bold text-white">FirstPower RSVP</span>
             </div>
             <div className="flex gap-6 text-sm">
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
             </div>
-            <p className="text-sm">&copy; {new Date().getFullYear()} Aadhya. Made with love.</p>
+            <p className="text-sm">&copy; {new Date().getFullYear()} FirstPower RSVP. Made with love.</p>
           </div>
         </div>
       </footer>

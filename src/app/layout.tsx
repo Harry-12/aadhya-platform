@@ -4,8 +4,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Aadhya — Beautiful Event Invitations",
-    template: "%s | Aadhya",
+    default: "FirstPower RSVP — Beautiful Event Invitations",
+    template: "%s | FirstPower RSVP",
   },
   description:
     "Create stunning digital invitations for weddings, cradle ceremonies, housewarmings, and more. Share via WhatsApp, track RSVPs, and celebrate beautifully.",
@@ -20,10 +20,10 @@ export const metadata: Metadata = {
     "digital invitation",
   ],
   openGraph: {
-    title: "Aadhya — Beautiful Event Invitations",
+    title: "FirstPower RSVP — Beautiful Event Invitations",
     description: "Create stunning digital invitations and track RSVPs effortlessly.",
     type: "website",
-    siteName: "Aadhya",
+    siteName: "FirstPower RSVP",
   },
 };
 

@@ -57,7 +57,7 @@ export default function SignupPage() {
           <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8">
             <span className="text-white font-display font-bold text-2xl">A</span>
           </div>
-          <h2 className="font-display text-3xl font-bold text-white mb-4">Join Aadhya</h2>
+          <h2 className="font-display text-3xl font-bold text-white mb-4">Join FirstPower RSVP</h2>
           <p className="text-white/70 text-lg">
             Create stunning invitations for your celebrations in minutes.
           </p>
@@ -83,7 +83,7 @@ export default function SignupPage() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-burgundy to-burgundy-light flex items-center justify-center">
               <span className="text-white font-display font-bold text-sm">A</span>
             </div>
-            <span className="font-display text-xl font-bold text-charcoal">Aadhya</span>
+            <span className="font-display text-xl font-bold text-charcoal">FirstPower RSVP</span>
           </Link>
 
           <h1 className="font-display text-2xl font-bold text-charcoal">Create Your Account</h1>

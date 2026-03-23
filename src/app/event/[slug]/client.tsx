@@ -731,7 +731,7 @@ export default function EventPageClient({ event }: EventPageClientProps) {
       <footer className="py-10 text-center">
         <p className="text-xs text-charcoal-muted">
           Made with <HeartIcon size={12} className="inline" style={{ color: theme.primary }} /> on{" "}
-          <a href="/" className="hover:underline" style={{ color: theme.primary }}>Aadhya</a>
+          <a href="/" className="hover:underline" style={{ color: theme.primary }}>FirstPower RSVP</a>
         </p>
       </footer>
     </div>

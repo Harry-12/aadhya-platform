@@ -67,7 +67,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-burgundy to-burgundy-light flex items-center justify-center">
                 <span className="text-white font-display font-bold text-sm">A</span>
               </div>
-              <span className="font-display text-lg font-bold text-charcoal">Aadhya</span>
+              <span className="font-display text-lg font-bold text-charcoal">FirstPower RSVP</span>
             </Link>
             <button className="lg:hidden p-1" onClick={() => setSidebarOpen(false)}>
               <XIcon size={20} />
