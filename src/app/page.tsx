@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Navbar } from "@/components/ui/navbar";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,14 +16,21 @@ import {
   WhatsAppIcon,
   ChevronRightIcon,
   StarIcon,
+  ImageIcon,
 } from "@/components/ui/icons";
 import { PaisleyBorder } from "@/components/event/paisley-border";
+import { TEMPLATES } from "@/lib/templates";
 
 const FEATURES = [
   {
     icon: <SparklesIcon size={24} />,
-    title: "Stunning Designs",
-    description: "Elegant templates for weddings, cradle ceremonies, housewarmings, and every celebration.",
+    title: "12+ Stunning Templates",
+    description: "Beautiful designs for weddings, cradle ceremonies, housewarmings, and every celebration. Choose and customize freely.",
+  },
+  {
+    icon: <ImageIcon size={24} />,
+    title: "Upload Your Photos",
+    description: "Add personal cover photos to your invitations. Drag, drop, and see a live preview instantly.",
   },
   {
     icon: <WhatsAppIcon size={24} />,
@@ -32,7 +40,7 @@ const FEATURES = [
   {
     icon: <UsersIcon size={24} />,
     title: "Smart RSVP Tracking",
-    description: "Real-time guest responses with meal preferences, plus-ones, and headcount.",
+    description: "Real-time guest responses with meal preferences, plus-ones, and headcount tracking.",
   },
   {
     icon: <CalendarIcon size={24} />,
@@ -47,23 +55,32 @@ const FEATURES = [
   {
     icon: <GlobeIcon size={24} />,
     title: "Multi-Language",
-    description: "Support for Telugu, Hindi, and English so every guest feels at home.",
+    description: "Support for Telugu, Hindi, Tamil, and English so every guest feels at home.",
+  },
+  {
+    icon: <HeartIcon size={24} />,
+    title: "Wishes Wall & Gallery",
+    description: "Let guests leave messages, blessings, and share photos together.",
   },
 ];
 
 const STEPS = [
-  { number: "01", title: "Choose Your Template", description: "Pick from our curated collection of culturally rich designs." },
-  { number: "02", title: "Customize Everything", description: "Add your details, photos, timeline, and personal touches." },
-  { number: "03", title: "Share & Track", description: "Send via WhatsApp and watch RSVPs roll in on your dashboard." },
+  { number: "01", title: "Choose Your Template", description: "Pick from 12+ gorgeous designs — elegant, fun, cultural, or minimal. Each one is crafted for your occasion." },
+  { number: "02", title: "Add Photos & Details", description: "Upload your personal photos, fill in event details, and customize colors and settings." },
+  { number: "03", title: "Share & Track", description: "Send via WhatsApp and watch RSVPs roll in on your dashboard. Guests see a stunning invitation." },
 ];
 
 const TESTIMONIALS = [
-  { name: "Priya Reddy", event: "Wedding", text: "The most beautiful digital invitation our guests had ever seen. The Telugu support made it perfect for our families." },
-  { name: "Rahul Sharma", event: "Baby Shower", text: "So easy to set up and share. We got 95% RSVP responses within 24 hours through WhatsApp!" },
-  { name: "Lakshmi Nair", event: "Housewarming", text: "The timeline feature was amazing. Our guests knew exactly when each ceremony was happening." },
+  { name: "Priya Reddy", event: "Wedding", text: "The most beautiful digital invitation our guests had ever seen. The Telugu support made it perfect for our families.", rating: 5 },
+  { name: "Rahul Sharma", event: "Baby Shower", text: "So easy to set up and share. We got 95% RSVP responses within 24 hours through WhatsApp!", rating: 5 },
+  { name: "Lakshmi Nair", event: "Housewarming", text: "The timeline feature was amazing. Our guests knew exactly when each ceremony was happening.", rating: 5 },
+  { name: "Deepa Krishnan", event: "Cradle Ceremony", text: "The templates are gorgeous! We used the Peacock Royale theme and everyone complimented it.", rating: 5 },
 ];
 
 export default function LandingPage() {
+  const [hoveredTemplate, setHoveredTemplate] = useState<string | null>(null);
+  const showcaseTemplates = TEMPLATES.slice(0, 8);
+
   return (
     <div className="min-h-screen bg-cream">
       <Navbar />
@@ -71,23 +88,32 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-white to-cream" />
+        {/* Decorative blobs */}
+        <div className="absolute top-20 -left-20 w-72 h-72 bg-burgundy/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 -right-20 w-72 h-72 bg-gold/10 rounded-full blur-3xl" />
+
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-32 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-burgundy/5 border border-burgundy/10 mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-burgundy/5 border border-burgundy/10 mb-6 animate-fade-in">
             <SparklesIcon size={14} className="text-burgundy" />
-            <span className="text-sm text-burgundy font-medium">Beautiful invitations for every occasion</span>
+            <span className="text-sm text-burgundy font-medium">12+ beautiful templates · Photo uploads · RSVP tracking</span>
           </div>
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-charcoal leading-tight max-w-4xl mx-auto">
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-charcoal leading-tight max-w-5xl mx-auto animate-fade-in">
             Create Invitations That{" "}
-            <span className="text-burgundy">Touch Hearts</span>
+            <span className="text-burgundy relative">
+              Touch Hearts
+              <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none">
+                <path d="M2 8C50 2 100 2 150 6C200 10 250 4 298 6" stroke="#D4A574" strokeWidth="3" strokeLinecap="round" />
+              </svg>
+            </span>
           </h1>
-          <p className="mt-6 text-lg sm:text-xl text-charcoal-light max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-lg sm:text-xl text-charcoal-light max-w-2xl mx-auto leading-relaxed animate-slide-up">
             Stunning digital invitations for weddings, cradle ceremonies, housewarmings, and more.
-            Share via WhatsApp, track RSVPs, and celebrate beautifully.
+            Upload your photos, choose a template, share via WhatsApp, and track RSVPs.
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
             <Link href="/signup">
               <Button size="lg" icon={<SparklesIcon size={18} />}>
-                Create Your First Event
+                Create Your First Event — Free
               </Button>
             </Link>
             <Link href="/event/demo">
@@ -96,10 +122,10 @@ export default function LandingPage() {
               </Button>
             </Link>
           </div>
-          <p className="mt-4 text-sm text-charcoal-muted">Free to start. No credit card required.</p>
+          <p className="mt-4 text-sm text-charcoal-muted">Free forever. No credit card required.</p>
 
-          {/* Hero preview */}
-          <div className="mt-16 relative max-w-3xl mx-auto">
+          {/* Hero preview - invitation mockup */}
+          <div className="mt-16 relative max-w-3xl mx-auto animate-slide-up">
             <div className="rounded-2xl bg-white shadow-2xl shadow-burgundy/10 border border-gold/10 overflow-hidden">
               <div className="bg-gradient-to-r from-burgundy/5 via-gold/5 to-burgundy/5 p-8 sm:p-12">
                 <PaisleyBorder position="top" className="mb-6" />
@@ -122,7 +148,7 @@ export default function LandingPage() {
               </div>
             </div>
             {/* Floating badges */}
-            <div className="absolute -right-4 top-8 hidden sm:block bg-white rounded-xl shadow-lg border border-gold/10 p-3 animate-bounce-slow">
+            <div className="absolute -right-4 top-8 hidden sm:block bg-white rounded-xl shadow-lg border border-gold/10 p-3 animate-bounce">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
                   <CheckIcon size={16} className="text-green-600" />
@@ -133,12 +159,84 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+            <div className="absolute -left-4 bottom-8 hidden sm:block bg-white rounded-xl shadow-lg border border-gold/10 p-3 animate-bounce" style={{ animationDelay: "0.5s" }}>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                  <span className="text-sm">📸</span>
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-semibold text-charcoal">Photo Uploaded</p>
+                  <p className="text-xs text-charcoal-muted">Cover image set</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Template Showcase - NEW */}
+      <section className="py-20 sm:py-28 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-14">
+            <p className="text-burgundy text-sm font-semibold uppercase tracking-wider mb-3">12+ beautiful designs</p>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-charcoal">
+              Templates for Every Occasion
+            </h2>
+            <p className="mt-3 text-charcoal-light max-w-xl mx-auto">
+              From elegant weddings to fun birthday parties, cultural celebrations to corporate events — find your perfect style.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {showcaseTemplates.map((template) => (
+              <div
+                key={template.id}
+                className="group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+                onMouseEnter={() => setHoveredTemplate(template.id)}
+                onMouseLeave={() => setHoveredTemplate(null)}
+              >
+                <div
+                  className="aspect-[3/4] relative flex flex-col items-center justify-center p-4"
+                  style={{ background: template.preview.gradient }}
+                >
+                  {/* Decorative elements */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-4 left-4 w-8 h-8 border border-white/30 rounded-full" />
+                    <div className="absolute bottom-4 right-4 w-6 h-6 border border-white/30 rounded-full" />
+                  </div>
+
+                  {/* Mini preview */}
+                  <div className="relative z-10 text-center transform transition-transform duration-500 group-hover:scale-105">
+                    <div className="w-10 h-px mx-auto mb-3 opacity-60" style={{ background: template.preview.accentColor }} />
+                    <p className="text-[10px] uppercase tracking-[0.2em] opacity-70 mb-1" style={{ color: template.preview.textColor }}>
+                      You&apos;re Invited
+                    </p>
+                    <p className="text-base font-bold font-display leading-tight" style={{ color: template.preview.textColor }}>
+                      Your Event
+                    </p>
+                    <div className="w-10 h-px mx-auto mt-3 opacity-60" style={{ background: template.preview.accentColor }} />
+                  </div>
+                </div>
+                <div className="bg-white p-3 text-center">
+                  <p className="text-sm font-semibold text-charcoal">{template.name}</p>
+                  <p className="text-[11px] text-charcoal-muted capitalize">{template.category}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <Link href="/signup">
+              <Button variant="secondary" icon={<ChevronRightIcon size={18} />}>
+                Browse All Templates
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section id="features" className="py-20 sm:py-28 bg-white">
+      <section id="features" className="py-20 sm:py-28 bg-cream">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <p className="text-burgundy text-sm font-semibold uppercase tracking-wider mb-3">Everything you need</p>
@@ -146,13 +244,13 @@ export default function LandingPage() {
               Celebrations Made Simple
             </h2>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {FEATURES.map((f) => (
-              <div key={f.title} className="card p-6 hover:shadow-md transition-shadow">
+              <div key={f.title} className="card p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                 <div className="w-12 h-12 rounded-xl bg-burgundy/5 flex items-center justify-center text-burgundy mb-4">
                   {f.icon}
                 </div>
-                <h3 className="font-display text-lg font-semibold text-charcoal mb-2">{f.title}</h3>
+                <h3 className="font-display text-base font-semibold text-charcoal mb-2">{f.title}</h3>
                 <p className="text-charcoal-light text-sm leading-relaxed">{f.description}</p>
               </div>
             ))}
@@ -161,7 +259,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-20 sm:py-28 bg-cream">
+      <section id="how-it-works" className="py-20 sm:py-28 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <p className="text-burgundy text-sm font-semibold uppercase tracking-wider mb-3">Simple & elegant</p>
@@ -171,8 +269,8 @@ export default function LandingPage() {
           </div>
           <div className="space-y-8">
             {STEPS.map((step) => (
-              <div key={step.number} className="flex gap-6 items-start">
-                <div className="w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br from-burgundy to-burgundy-light flex items-center justify-center">
+              <div key={step.number} className="flex gap-6 items-start group">
+                <div className="w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br from-burgundy to-burgundy-light flex items-center justify-center group-hover:scale-110 transition-transform">
                   <span className="font-display text-xl font-bold text-white">{step.number}</span>
                 </div>
                 <div>
@@ -186,7 +284,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 sm:py-28 bg-white">
+      <section className="py-20 sm:py-28 bg-cream">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <p className="text-burgundy text-sm font-semibold uppercase tracking-wider mb-3">Loved by hosts</p>
@@ -194,10 +292,10 @@ export default function LandingPage() {
               What Our Users Say
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="card p-6">
-                <div className="flex gap-1 mb-4">
+              <div key={t.name} className="card p-6 hover:shadow-md transition-shadow">
+                <div className="flex gap-0.5 mb-4">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <StarIcon key={i} size={16} className="text-gold" style={{ fill: "#D4A574" }} />
                   ))}
@@ -214,7 +312,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-20 sm:py-28 bg-cream">
+      <section id="pricing" className="py-20 sm:py-28 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <p className="text-burgundy text-sm font-semibold uppercase tracking-wider mb-3">Simple pricing</p>
@@ -224,7 +322,7 @@ export default function LandingPage() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Free */}
-            <div className="card p-8">
+            <div className="card p-8 hover:shadow-md transition-shadow">
               <h3 className="font-display text-xl font-semibold text-charcoal">Free</h3>
               <p className="mt-2 text-charcoal-muted text-sm">Perfect for getting started</p>
               <div className="mt-6">
@@ -232,7 +330,7 @@ export default function LandingPage() {
                 <span className="text-charcoal-muted text-sm">/event</span>
               </div>
               <ul className="mt-6 space-y-3">
-                {["1 event", "Up to 50 guests", "Basic templates", "WhatsApp sharing", "RSVP tracking"].map((f) => (
+                {["1 event", "Up to 50 guests", "All templates", "Photo upload", "WhatsApp sharing", "RSVP tracking"].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-charcoal-light">
                     <CheckIcon size={16} className="text-green-500 shrink-0" />
                     {f}
@@ -240,11 +338,11 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Link href="/signup" className="block mt-8">
-                <Button variant="secondary" className="w-full">Get Started</Button>
+                <Button variant="secondary" className="w-full">Get Started Free</Button>
               </Link>
             </div>
             {/* Premium */}
-            <div className="card p-8 ring-2 ring-burgundy relative">
+            <div className="card p-8 ring-2 ring-burgundy relative hover:shadow-lg transition-shadow">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-burgundy text-white text-xs font-semibold">
                 Most Popular
               </div>
@@ -255,7 +353,7 @@ export default function LandingPage() {
                 <span className="text-charcoal-muted text-sm">/event</span>
               </div>
               <ul className="mt-6 space-y-3">
-                {["5 events", "Unlimited guests", "Premium templates", "Photo gallery", "Custom domain", "Event timeline", "Guest wishes wall"].map((f) => (
+                {["5 events", "Unlimited guests", "All templates", "Unlimited photos", "Custom cover images", "Event timeline", "Wishes wall", "Gift registry"].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-charcoal-light">
                     <CheckIcon size={16} className="text-green-500 shrink-0" />
                     {f}
@@ -267,7 +365,7 @@ export default function LandingPage() {
               </Link>
             </div>
             {/* Pro */}
-            <div className="card p-8">
+            <div className="card p-8 hover:shadow-md transition-shadow">
               <h3 className="font-display text-xl font-semibold text-charcoal">Pro</h3>
               <p className="mt-2 text-charcoal-muted text-sm">For event planners</p>
               <div className="mt-6">
@@ -291,25 +389,30 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 sm:py-28 bg-gradient-to-br from-burgundy to-burgundy-dark text-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+      <section className="py-20 sm:py-28 bg-gradient-to-br from-burgundy to-burgundy-dark text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-40 h-40 border border-white/30 rounded-full" />
+          <div className="absolute bottom-10 right-10 w-60 h-60 border border-white/20 rounded-full" />
+        </div>
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="font-display text-3xl sm:text-4xl font-bold">
             Ready to Create Something Beautiful?
           </h2>
           <p className="mt-4 text-white/80 text-lg">
             Join thousands of hosts who trust Aadhya for their special celebrations.
           </p>
-          <div className="mt-8">
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/signup">
               <Button
                 size="lg"
                 className="bg-white text-burgundy hover:bg-cream shadow-xl"
-                icon={<HeartIcon size={18} />}
+                icon={<SparklesIcon size={18} />}
               >
                 Create Your Free Invitation
               </Button>
             </Link>
           </div>
+          <p className="mt-4 text-white/50 text-sm">No credit card needed. Free forever.</p>
         </div>
       </section>
 

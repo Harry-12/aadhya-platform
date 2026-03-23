@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
+import { TemplatePicker } from "@/components/event/template-picker";
+import { ImageUpload } from "@/components/event/image-upload";
 import {
   CalendarIcon,
   ClockIcon,
@@ -19,9 +21,10 @@ import {
 } from "@/components/ui/icons";
 import { slugify } from "@/lib/utils";
 import { EVENT_TYPES, type EventType, type EventSettings } from "@/lib/types";
+import { type InvitationTemplate } from "@/lib/templates";
 import { toast } from "sonner";
 
-const STEPS = ["Event Type", "Details", "Venue", "Settings", "Review"];
+const STEPS = ["Event Type", "Template", "Cover Photo", "Details", "Venue", "Settings", "Review"];
 
 const DEFAULT_SETTINGS: EventSettings = {
   showCountdown: true,
@@ -44,6 +47,7 @@ export default function CreateEventPage() {
   const supabase = createClient();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<InvitationTemplate | null>(null);
 
   const [form, setForm] = useState({
     type: "" as EventType | "",
@@ -74,8 +78,10 @@ export default function CreateEventPage() {
   function canAdvance(): boolean {
     switch (step) {
       case 0: return form.type !== "";
-      case 1: return form.title !== "" && form.date !== "" && form.time !== "";
-      case 2: return true;
+      case 1: return selectedTemplate !== null;
+      case 2: return true; // cover photo is optional
+      case 3: return form.title !== "" && form.date !== "" && form.time !== "";
+      case 4: return true;
       default: return true;
     }
   }
@@ -86,6 +92,10 @@ export default function CreateEventPage() {
     if (!user) { toast.error("Please log in"); setLoading(false); return; }
 
     const slug = slugify(form.title) + "-" + Date.now().toString(36);
+    const theme = selectedTemplate
+      ? { primary: selectedTemplate.theme.primary, accent: selectedTemplate.theme.accent, background: selectedTemplate.theme.background }
+      : { primary: "#8B1A1A", accent: "#D4A574", background: "#FFF8F0" };
+
     const { data, error } = await supabase
       .from("events")
       .insert({
@@ -106,7 +116,7 @@ export default function CreateEventPage() {
         language: form.language,
         max_guests: form.max_guests ? parseInt(form.max_guests) : null,
         cover_image: form.cover_image,
-        theme: { primary: "#8B1A1A", accent: "#D4A574", background: "#FFF8F0" },
+        theme,
         settings: form.settings,
       })
       .select()
@@ -121,18 +131,27 @@ export default function CreateEventPage() {
     }
   }
 
+  // Get theme colors for preview
+  const previewTheme = selectedTemplate?.theme || {
+    primary: '#8B1A1A',
+    accent: '#D4A574',
+    background: '#FFF8F0',
+    gradientFrom: '#8B1A1A',
+    gradientTo: '#6B1414',
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="font-display text-2xl font-bold text-charcoal mb-2">Create New Event</h1>
       <p className="text-charcoal-light mb-8">Set up your beautiful invitation in just a few steps.</p>
 
       {/* Stepper */}
-      <div className="flex items-center gap-2 mb-10 overflow-x-auto pb-2">
+      <div className="flex items-center gap-1.5 mb-10 overflow-x-auto pb-2">
         {STEPS.map((s, i) => (
-          <div key={s} className="flex items-center gap-2">
+          <div key={s} className="flex items-center gap-1.5">
             <button
               onClick={() => i < step && setStep(i)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
                 i === step
                   ? "bg-burgundy text-white"
                   : i < step
@@ -140,10 +159,10 @@ export default function CreateEventPage() {
                   : "bg-cream text-charcoal-muted"
               }`}
             >
-              {i < step ? <CheckIcon size={14} /> : <span>{i + 1}</span>}
+              {i < step ? <CheckIcon size={12} /> : <span>{i + 1}</span>}
               <span className="hidden sm:inline">{s}</span>
             </button>
-            {i < STEPS.length - 1 && <div className="w-6 h-px bg-gold/20" />}
+            {i < STEPS.length - 1 && <div className="w-4 h-px bg-gold/20" />}
           </div>
         ))}
       </div>
@@ -171,8 +190,76 @@ export default function CreateEventPage() {
         </div>
       )}
 
-      {/* Step 1 – Details */}
+      {/* Step 1 – Template Selection */}
       {step === 1 && (
+        <TemplatePicker
+          eventType={form.type}
+          selectedTemplate={selectedTemplate?.id || null}
+          onSelect={(template) => setSelectedTemplate(template)}
+        />
+      )}
+
+      {/* Step 2 – Cover Photo */}
+      {step === 2 && (
+        <div className="space-y-5">
+          <h2 className="font-display text-lg font-semibold text-charcoal mb-2">Add a Cover Photo</h2>
+          <p className="text-sm text-charcoal-light mb-4">
+            Upload a personal photo to make your invitation extra special. This is optional — your template looks great on its own too!
+          </p>
+          <ImageUpload
+            currentImage={form.cover_image}
+            onImageChange={(url) => updateForm({ cover_image: url })}
+            label=""
+            hint="Drag & drop or click to upload. JPG, PNG up to 5MB."
+          />
+          {form.cover_image && selectedTemplate && (
+            <div className="mt-6">
+              <p className="text-sm font-medium text-charcoal mb-3">Preview with your template:</p>
+              <div
+                className="rounded-2xl overflow-hidden shadow-lg"
+                style={{ background: selectedTemplate.preview.gradient }}
+              >
+                <div className="relative" style={{ aspectRatio: "16/9" }}>
+                  <img
+                    src={form.cover_image}
+                    alt="Cover preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: selectedTemplate.coverOverlay }}
+                  />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+                    <p
+                      className="text-xs uppercase tracking-[0.2em] opacity-80 mb-2"
+                      style={{ color: selectedTemplate.preview.textColor }}
+                    >
+                      You are invited to
+                    </p>
+                    <p
+                      className="font-display text-2xl font-bold"
+                      style={{ color: selectedTemplate.preview.textColor }}
+                    >
+                      {form.title || "Your Event Name"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {!form.cover_image && (
+            <button
+              onClick={() => setStep(step + 1)}
+              className="text-sm text-charcoal-muted hover:text-charcoal transition-colors underline"
+            >
+              Skip for now
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Step 3 – Details */}
+      {step === 3 && (
         <div className="space-y-5">
           <h2 className="font-display text-lg font-semibold text-charcoal mb-4">Event Details</h2>
           <Input
@@ -238,8 +325,8 @@ export default function CreateEventPage() {
         </div>
       )}
 
-      {/* Step 2 – Venue */}
-      {step === 2 && (
+      {/* Step 4 – Venue */}
+      {step === 4 && (
         <div className="space-y-5">
           <h2 className="font-display text-lg font-semibold text-charcoal mb-4">Venue Details</h2>
           <Input
@@ -274,8 +361,8 @@ export default function CreateEventPage() {
         </div>
       )}
 
-      {/* Step 3 – Settings */}
-      {step === 3 && (
+      {/* Step 5 – Settings */}
+      {step === 5 && (
         <div className="space-y-5">
           <h2 className="font-display text-lg font-semibold text-charcoal mb-4">Event Settings</h2>
           <div className="card p-5 space-y-4">
@@ -301,20 +388,70 @@ export default function CreateEventPage() {
         </div>
       )}
 
-      {/* Step 4 – Review */}
-      {step === 4 && (
+      {/* Step 6 – Review */}
+      {step === 6 && (
         <div className="space-y-5">
           <h2 className="font-display text-lg font-semibold text-charcoal mb-4">Review Your Event</h2>
+
+          {/* Live preview card */}
+          <div
+            className="rounded-2xl overflow-hidden shadow-xl"
+            style={{ background: selectedTemplate?.preview.gradient || 'linear-gradient(135deg, #8B1A1A 0%, #D4A574 50%, #8B1A1A 100%)' }}
+          >
+            {form.cover_image ? (
+              <div className="relative" style={{ aspectRatio: "16/9" }}>
+                <img src={form.cover_image} alt="" className="w-full h-full object-cover" />
+                <div
+                  className="absolute inset-0"
+                  style={{ background: selectedTemplate?.coverOverlay || 'linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.2), rgba(255,248,240,0.9))' }}
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                  <p className="text-xs uppercase tracking-[0.2em] opacity-80 mb-2 text-white">
+                    {EVENT_TYPES.find((t) => t.value === form.type)?.emoji} You are cordially invited
+                  </p>
+                  <h3 className="font-display text-3xl font-bold text-white drop-shadow-lg">{form.title}</h3>
+                  {form.subtitle && <p className="text-white/80 mt-1">{form.subtitle}</p>}
+                </div>
+              </div>
+            ) : (
+              <div className="p-8 sm:p-12 text-center">
+                <p
+                  className="text-xs uppercase tracking-[0.2em] opacity-70 mb-2"
+                  style={{ color: selectedTemplate?.preview.textColor || '#FFF8F0' }}
+                >
+                  {EVENT_TYPES.find((t) => t.value === form.type)?.emoji} You are cordially invited
+                </p>
+                <h3
+                  className="font-display text-3xl font-bold"
+                  style={{ color: selectedTemplate?.preview.textColor || '#FFF8F0' }}
+                >
+                  {form.title}
+                </h3>
+                {form.subtitle && (
+                  <p
+                    className="opacity-70 mt-1"
+                    style={{ color: selectedTemplate?.preview.textColor || '#FFF8F0' }}
+                  >
+                    {form.subtitle}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Details card */}
           <div className="card p-6 space-y-4">
-            <div className="text-center pb-4 border-b border-gold/10">
-              <p className="text-sm text-gold-muted uppercase tracking-wider mb-1">
-                {EVENT_TYPES.find((t) => t.value === form.type)?.emoji}{" "}
-                {EVENT_TYPES.find((t) => t.value === form.type)?.label}
-              </p>
-              <h3 className="font-display text-2xl font-bold text-burgundy">{form.title}</h3>
-              {form.subtitle && <p className="text-gold-muted">{form.subtitle}</p>}
-            </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-charcoal-muted">Template</p>
+                <p className="font-medium text-charcoal">{selectedTemplate?.name || "Default"}</p>
+              </div>
+              <div>
+                <p className="text-charcoal-muted">Type</p>
+                <p className="font-medium text-charcoal">
+                  {EVENT_TYPES.find((t) => t.value === form.type)?.label || "Not set"}
+                </p>
+              </div>
               <div>
                 <p className="text-charcoal-muted">Date</p>
                 <p className="font-medium text-charcoal">{form.date || "Not set"}</p>
