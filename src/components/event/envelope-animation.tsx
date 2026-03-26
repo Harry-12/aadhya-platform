@@ -95,7 +95,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
           <div
             className="absolute inset-0 rounded-3xl overflow-hidden"
             style={{
-              background: "linear-gradient(145deg, #FFFEF9 0%, #FFF9EE 100%)",
+              background: `linear-gradient(145deg, ${bg} 0%, ${bg}EE 100%)`,
               boxShadow: `0 30px 80px ${primary}12, 0 15px 40px ${primary}08, 0 0 0 1px ${accent}15`,
             }}
           >
@@ -206,8 +206,8 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
             <svg viewBox="0 0 580 120" className="w-full h-full" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="flapGrad" x1="0%" y1="0%" x2="50%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFEF9" />
-                  <stop offset="100%" stopColor="#FFF6E8" />
+                  <stop offset="0%" stopColor={bg} />
+                  <stop offset="100%" stopColor={`${bg}EE`} />
                 </linearGradient>
               </defs>
               <path
