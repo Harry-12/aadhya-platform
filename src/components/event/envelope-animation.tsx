@@ -201,9 +201,9 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
               "absolute -top-0.5 left-0 right-0 origin-top transition-transform duration-700",
               opened && "-scale-y-100"
             )}
-            style={{ height: "45%" }}
+            style={{ height: "30%" }}
           >
-            <svg viewBox="0 0 580 170" className="w-full h-full" preserveAspectRatio="none">
+            <svg viewBox="0 0 580 120" className="w-full h-full" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="flapGrad" x1="0%" y1="0%" x2="50%" y2="100%">
                   <stop offset="0%" stopColor="#FFFEF9" />
@@ -211,21 +211,21 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
                 </linearGradient>
               </defs>
               <path
-                d="M0 0 L290 145 L580 0 L580 0 L0 0Z"
+                d="M0 0 L290 105 L580 0 L580 0 L0 0Z"
                 fill="url(#flapGrad)"
                 stroke={accent}
                 strokeWidth="0.5"
                 opacity="0.95"
               />
               <path
-                d="M50 6 L290 125 L530 6"
+                d="M50 6 L290 90 L530 6"
                 fill="none"
                 stroke={accent}
                 strokeWidth="0.4"
                 opacity="0.3"
               />
               <path
-                d="M90 8 L290 110 L490 8"
+                d="M90 8 L290 78 L490 8"
                 fill="none"
                 stroke={accent}
                 strokeWidth="0.3"
@@ -240,7 +240,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
             style={{
               left: "50%",
               top: "0",
-              transform: "translate(-50%, -35%)",
+              transform: "translate(-50%, -40%)",
             }}
           >
             <div
