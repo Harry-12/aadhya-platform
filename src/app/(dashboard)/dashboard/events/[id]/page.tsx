@@ -103,6 +103,12 @@ export default function EventDetailPage() {
     if (!event) return;
     setSaving(true);
 
+    // Look up the selected template and sync theme colors
+    const selectedTemplate = TEMPLATES.find(t => t.id === editTemplateId);
+    const themeColors = selectedTemplate
+      ? { primary: selectedTemplate.theme.primary, accent: selectedTemplate.theme.accent, background: selectedTemplate.theme.background }
+      : event.theme;
+
     const updates: Record<string, unknown> = {
       title: editTitle,
       subtitle: editSubtitle || null,
@@ -115,6 +121,7 @@ export default function EventDetailPage() {
       description: editDescription || null,
       max_guests: editMaxGuests || null,
       template_id: editTemplateId,
+      theme: themeColors,
     };
 
     const { error } = await supabase
