@@ -60,4 +60,17 @@ export function getEmailShareUrl(eventUrl: string, title: string, date: string):
   return `mailto:?subject=${subject}&body=${body}`;
 }
 
+export function formatTime(time: string): string {
+  if (!time) return "";
+  // Handle "HH:mm" 24h format
+  const parts = time.match(/^(\d{1,2}):(\d{2})/);
+  if (!parts) return time;
+  let hours = parseInt(parts[1], 10);
+  const minutes = parts[2];
+  const ampm = hours >= 12 ? "PM" : "AM";
+  if (hours === 0) hours = 12;
+  else if (hours > 12) hours -= 12;
+  return `${hours}:${minutes} ${ampm}`;
+}
+
 export const AVATAR_COLORS = ["#8B1A1A", "#D4A574", "#7D8C6E", "#C49A6C", "#A52A2A", "#6B4423"];

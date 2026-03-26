@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { cn, formatDate, getWhatsAppShareUrl, getSmsShareUrl, getEmailShareUrl } from "@/lib/utils";
+import { cn, formatDate, formatTime, getWhatsAppShareUrl, getSmsShareUrl, getEmailShareUrl } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
@@ -103,6 +103,7 @@ export default function EventPageClient({ event }: EventPageClientProps) {
         title={event.title}
         subtitle={event.subtitle || undefined}
         onOpen={() => setEnvelopeOpen(true)}
+        theme={theme}
       />
     );
   }
@@ -211,7 +212,7 @@ export default function EventPageClient({ event }: EventPageClientProps) {
                   </span>
                   <span className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-sm font-medium">
                     <ClockIcon size={16} />
-                    {event.time}{event.end_time ? ` – ${event.end_time}` : ""}
+                    {formatTime(event.time)}{event.end_time ? ` – ${formatTime(event.end_time)}` : ""}
                   </span>
                   {event.venue && (
                     <span className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-sm font-medium">
@@ -224,43 +225,68 @@ export default function EventPageClient({ event }: EventPageClientProps) {
             </div>
           </>
         ) : (
-          <div className="relative">
+          <div className="relative overflow-hidden">
+            {/* Multi-layer gradient background */}
             <div
               className="absolute inset-0"
               style={{
                 background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.accent}88 50%, ${theme.primary} 100%)`,
               }}
             />
-            <div className="relative max-w-2xl mx-auto px-4 py-20 sm:py-32 text-center">
-              <PaisleyBorder position="top" className="mb-8" />
+            {/* Subtle radial glow */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `radial-gradient(ellipse at 50% 30%, ${theme.accent}30 0%, transparent 60%)`,
+              }}
+            />
+            {/* Decorative floating orbs */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div
+                className="absolute w-64 h-64 rounded-full blur-3xl animate-pulse"
+                style={{ background: `${theme.accent}15`, top: '-10%', left: '-5%', animationDuration: '4s' }}
+              />
+              <div
+                className="absolute w-48 h-48 rounded-full blur-3xl animate-pulse"
+                style={{ background: `${theme.accent}10`, bottom: '5%', right: '-5%', animationDuration: '5s', animationDelay: '1s' }}
+              />
+            </div>
+            <div className="relative max-w-2xl mx-auto px-4 py-24 sm:py-36 text-center">
+              <PaisleyBorder position="top" className="mb-10" />
               <div className="animate-fade-in">
-                <p className="text-white/70 text-sm uppercase tracking-[0.3em] mb-4 font-medium">
+                <p className="text-white/60 text-xs sm:text-sm uppercase tracking-[0.4em] mb-5 font-medium">
                   You are cordially invited to
                 </p>
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight">
+                <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold text-white leading-tight drop-shadow-lg">
                   {event.title}
                 </h1>
                 {event.subtitle && (
-                  <p className="font-display text-xl sm:text-2xl text-white/70 mt-3">{event.subtitle}</p>
+                  <p className="font-display text-lg sm:text-2xl text-white/70 mt-4 font-light italic">{event.subtitle}</p>
                 )}
+                {/* Decorative divider */}
+                <div className="flex items-center justify-center gap-3 mt-6">
+                  <div className="w-12 h-px" style={{ background: `${theme.accent}60` }} />
+                  <div className="w-2 h-2 rounded-full" style={{ background: `${theme.accent}80` }} />
+                  <div className="w-12 h-px" style={{ background: `${theme.accent}60` }} />
+                </div>
               </div>
               <div className="mt-8 flex flex-wrap justify-center gap-3 animate-slide-up">
-                <span className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur border border-white/20 text-white text-sm font-medium">
+                <span className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg">
                   <CalendarIcon size={16} />
                   {formatDate(event.date)}
                 </span>
-                <span className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur border border-white/20 text-white text-sm font-medium">
+                <span className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg">
                   <ClockIcon size={16} />
-                  {event.time}{event.end_time ? ` – ${event.end_time}` : ""}
+                  {formatTime(event.time)}{event.end_time ? ` – ${formatTime(event.end_time)}` : ""}
                 </span>
                 {event.venue && (
-                  <span className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur border border-white/20 text-white text-sm font-medium">
+                  <span className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg">
                     <MapPinIcon size={16} />
                     {event.venue}
                   </span>
                 )}
               </div>
-              <PaisleyBorder position="bottom" className="mt-8" />
+              <PaisleyBorder position="bottom" className="mt-10" />
             </div>
           </div>
         )}
@@ -271,10 +297,17 @@ export default function EventPageClient({ event }: EventPageClientProps) {
         <section
           id="description"
           data-animate
-          className={cn("py-10 sm:py-14", sectionClass("description"))}
+          className={cn("py-14 sm:py-20", sectionClass("description"))}
         >
-          <div className="max-w-lg mx-auto px-4 text-center">
-            <p className="text-charcoal-light leading-relaxed text-lg">{event.description}</p>
+          <div className="max-w-xl mx-auto px-6 text-center">
+            {/* Decorative quote mark */}
+            <div className="mb-4">
+              <span className="font-display text-5xl leading-none" style={{ color: `${theme.primary}20` }}>&ldquo;</span>
+            </div>
+            <p className="text-charcoal-light leading-relaxed text-lg sm:text-xl font-light">{event.description}</p>
+            <div className="mt-6">
+              <span className="font-display text-5xl leading-none" style={{ color: `${theme.primary}20` }}>&rdquo;</span>
+            </div>
           </div>
         </section>
       )}
@@ -317,7 +350,7 @@ export default function EventPageClient({ event }: EventPageClientProps) {
           className={cn("py-10 sm:py-14 bg-white/50", sectionClass("countdown"))}
         >
           <div className="max-w-2xl mx-auto px-4">
-            <CountdownTimer date={event.date} time={event.time} />
+            <CountdownTimer date={event.date} time={event.time} theme={theme} />
           </div>
         </section>
       )}
@@ -728,10 +761,15 @@ export default function EventPageClient({ event }: EventPageClientProps) {
       </div>
 
       {/* Footer */}
-      <footer className="py-10 text-center">
-        <p className="text-xs text-charcoal-muted">
+      <footer className="py-12 text-center">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <div className="w-8 h-px" style={{ background: `${theme.accent}30` }} />
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: `${theme.accent}40` }} />
+          <div className="w-8 h-px" style={{ background: `${theme.accent}30` }} />
+        </div>
+        <p className="text-xs text-charcoal-muted mt-3">
           Made with <HeartIcon size={12} className="inline" style={{ color: theme.primary }} /> on{" "}
-          <a href="/" className="hover:underline" style={{ color: theme.primary }}>FirstPower RSVP</a>
+          <a href="/" className="hover:underline font-medium" style={{ color: theme.primary }}>FirstPower RSVP</a>
         </p>
       </footer>
     </div>
