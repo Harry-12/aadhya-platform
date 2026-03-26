@@ -24,6 +24,7 @@ import {
   ClockIcon,
 } from "@/components/ui/icons";
 import { formatDate, formatTime } from "@/lib/utils";
+import { TEMPLATES } from "@/lib/templates";
 import type { Event, Rsvp } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -49,6 +50,7 @@ export default function EventDetailPage() {
   const [editCity, setEditCity] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editMaxGuests, setEditMaxGuests] = useState<number | null>(null);
+  const [editTemplateId, setEditTemplateId] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -84,6 +86,7 @@ export default function EventDetailPage() {
     setEditCity(evt.city || "");
     setEditDescription(evt.description || "");
     setEditMaxGuests(evt.max_guests || null);
+    setEditTemplateId(evt.template_id || "midnight-bloom");
   }
 
   function startEditing() {
@@ -111,6 +114,7 @@ export default function EventDetailPage() {
       city: editCity || null,
       description: editDescription || null,
       max_guests: editMaxGuests || null,
+      template_id: editTemplateId,
     };
 
     const { error } = await supabase
@@ -269,6 +273,20 @@ export default function EventDetailPage() {
                 </div>
               </div>
             </div>
+            {event.template_id && (
+              <div className="mt-4 pt-4 border-t border-gold/10">
+                <p className="text-charcoal-muted text-sm mb-1">Theme</p>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-8 h-8 rounded-lg"
+                    style={{ background: TEMPLATES.find(t => t.id === event.template_id)?.preview.gradient || "#ccc" }}
+                  />
+                  <p className="text-sm font-medium text-charcoal">
+                    {TEMPLATES.find(t => t.id === event.template_id)?.name || event.template_id}
+                  </p>
+                </div>
+              </div>
+            )}
             {event.address && (
               <div className="mt-4 pt-4 border-t border-gold/10">
                 <p className="text-charcoal-muted text-sm mb-1">Full Address</p>
@@ -357,6 +375,39 @@ export default function EventDetailPage() {
               onChange={(e) => setEditSubtitle(e.target.value)}
               placeholder="e.g., Join us for a joyous celebration!"
             />
+
+            {/* Template Selector */}
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-2">Invitation Theme</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {TEMPLATES.map((tmpl) => (
+                  <button
+                    key={tmpl.id}
+                    type="button"
+                    onClick={() => setEditTemplateId(tmpl.id)}
+                    className={`relative rounded-xl overflow-hidden border-2 transition-all ${
+                      editTemplateId === tmpl.id
+                        ? "border-burgundy shadow-lg scale-[1.02]"
+                        : "border-transparent hover:border-gold/30"
+                    }`}
+                  >
+                    <div
+                      className="h-16 w-full"
+                      style={{ background: tmpl.preview.gradient }}
+                    />
+                    <div className="px-2 py-1.5 bg-white">
+                      <p className="text-xs font-medium text-charcoal truncate">{tmpl.name}</p>
+                      <p className="text-[10px] text-charcoal-muted capitalize">{tmpl.category}</p>
+                    </div>
+                    {editTemplateId === tmpl.id && (
+                      <div className="absolute top-1 right-1 w-5 h-5 bg-burgundy rounded-full flex items-center justify-center">
+                        <CheckIcon size={12} className="text-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <Input
