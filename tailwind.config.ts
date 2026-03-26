@@ -23,6 +23,13 @@ const config: Config = {
         "fade-in": "fadeIn 0.6s ease-out",
         "slide-up": "slideUp 0.5s ease-out",
         bounce: "bounce 1.5s infinite",
+        "envelope-enter": "envelopeEnter 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        "seal-glow": "sealGlow 3s ease-in-out infinite",
+        "sparkle-drift": "sparkleDrift 6s ease-in-out infinite",
+        "sparkle-twinkle": "sparkleTwinkle 2s ease-in-out infinite",
+        "text-reveal": "textReveal 0.8s ease-out 0.6s forwards",
+        "gentle-float": "gentleFloat 4s ease-in-out infinite",
+        "shimmer": "shimmer 3s ease-in-out infinite",
       },
       keyframes: {
         floatDown: {
@@ -47,6 +54,36 @@ const config: Config = {
         slideUp: {
           "0%": { opacity: "0", transform: "translateY(20px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        envelopeEnter: {
+          "0%": { opacity: "0", transform: "translateY(60px) scale(0.92)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        sealGlow: {
+          "0%, 100%": { boxShadow: "0 6px 20px rgba(67,56,202,0.3), 0 2px 8px rgba(67,56,202,0.2)" },
+          "50%": { boxShadow: "0 8px 30px rgba(67,56,202,0.5), 0 4px 15px rgba(167,139,250,0.4)" },
+        },
+        sparkleDrift: {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)", opacity: "0.2" },
+          "25%": { transform: "translate(10px, -15px) scale(1.3)", opacity: "0.5" },
+          "50%": { transform: "translate(-5px, -25px) scale(0.8)", opacity: "0.15" },
+          "75%": { transform: "translate(15px, -10px) scale(1.2)", opacity: "0.4" },
+        },
+        sparkleTwinkle: {
+          "0%, 100%": { opacity: "0.1", transform: "scale(0.8)" },
+          "50%": { opacity: "0.6", transform: "scale(1.4)" },
+        },
+        textReveal: {
+          "0%": { opacity: "0", transform: "translateY(15px)", filter: "blur(4px)" },
+          "100%": { opacity: "1", transform: "translateY(0)", filter: "blur(0px)" },
+        },
+        gentleFloat: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% center" },
+          "100%": { backgroundPosition: "200% center" },
         },
       },
     },

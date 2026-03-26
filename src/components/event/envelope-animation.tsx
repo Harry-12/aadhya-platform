@@ -30,7 +30,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
     >
       {/* Large ambient glow behind envelope */}
       <div
-        className="absolute rounded-full blur-3xl"
+        className="absolute rounded-full blur-3xl animate-pulse"
         style={{
           width: "60vw",
           height: "60vw",
@@ -40,47 +40,54 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
+          animationDuration: "4s",
         }}
       />
 
-      {/* Floating sparkle particles */}
+      {/* Animated sparkle particles that drift and twinkle */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(12)].map((_, i) => (
+        {[...Array(16)].map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full animate-pulse"
+            className={cn(
+              "absolute rounded-full",
+              i % 2 === 0 ? "animate-sparkle-drift" : "animate-sparkle-twinkle"
+            )}
             style={{
-              width: i % 3 === 0 ? "3px" : "2px",
-              height: i % 3 === 0 ? "3px" : "2px",
-              background: i % 2 === 0 ? accent : primary,
-              opacity: 0.25,
-              left: `${8 + i * 7.5}%`,
-              top: `${12 + (i % 4) * 22}%`,
-              animationDelay: `${i * 0.35}s`,
-              animationDuration: `${2.5 + (i % 3) * 0.5}s`,
+              width: i % 4 === 0 ? "4px" : i % 3 === 0 ? "3px" : "2px",
+              height: i % 4 === 0 ? "4px" : i % 3 === 0 ? "3px" : "2px",
+              background: i % 3 === 0 ? accent : i % 3 === 1 ? `${primary}80` : "white",
+              left: `${5 + i * 5.8}%`,
+              top: `${10 + (i % 5) * 18}%`,
+              animationDelay: `${i * 0.3}s`,
+              animationDuration: `${3 + (i % 4) * 1.5}s`,
+              filter: i % 4 === 0 ? `drop-shadow(0 0 3px ${accent})` : "none",
             }}
           />
         ))}
       </div>
 
       <div className="text-center w-full px-4">
-        {/* Top decorative text */}
+        {/* Top decorative text — animate in */}
         <p
-          className="text-xs sm:text-sm uppercase tracking-[0.5em] font-medium mb-8 animate-fade-in"
+          className="text-xs sm:text-sm uppercase tracking-[0.5em] font-medium mb-8 opacity-0 animate-text-reveal"
           style={{ color: `${primary}50` }}
         >
           You have been invited
         </p>
 
-        {/* Envelope — large and premium */}
+        {/* Envelope — enters with float-up animation, hovers with gentle float */}
         <div
           className={cn(
-            "relative mx-auto cursor-pointer transition-transform duration-300 hover:scale-[1.03]",
+            "relative mx-auto cursor-pointer animate-envelope-enter",
+            !opened && "hover:scale-[1.03] transition-transform duration-300",
+            !opened && "animate-gentle-float",
             opened && "animate-envelope-open"
           )}
           style={{
             width: "min(580px, 90vw)",
             height: "min(380px, 55vw)",
+            animationDelay: opened ? "0s" : "0.2s",
           }}
           onClick={handleOpen}
         >
@@ -92,6 +99,17 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
               boxShadow: `0 30px 80px ${primary}12, 0 15px 40px ${primary}08, 0 0 0 1px ${accent}15`,
             }}
           >
+            {/* Shimmer overlay on the card */}
+            <div
+              className="absolute inset-0 animate-shimmer pointer-events-none"
+              style={{
+                background: `linear-gradient(110deg, transparent 30%, ${accent}08 45%, transparent 60%)`,
+                backgroundSize: "200% 100%",
+                animationDuration: "4s",
+                animationIterationCount: "infinite",
+              }}
+            />
+
             {/* Triple ornamental border */}
             <div
               className="absolute inset-3 sm:inset-4 rounded-2xl border"
@@ -106,7 +124,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
               style={{ borderColor: `${accent}12` }}
             />
 
-            {/* Corner ornaments — larger */}
+            {/* Corner ornaments */}
             {[
               "top-4 left-4 sm:top-5 sm:left-5",
               "top-4 right-4 sm:top-5 sm:right-5 rotate-90",
@@ -136,40 +154,40 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
               </svg>
             ))}
 
-            {/* Content */}
+            {/* Content — text reveals with blur-to-sharp animation */}
             <div className="absolute inset-0 flex flex-col items-center justify-center p-10 sm:p-14">
-              {/* Small decorative divider above title */}
-              <div className="flex items-center gap-2 mb-4">
+              {/* Decorative divider above title */}
+              <div className="flex items-center gap-2 mb-4 opacity-0 animate-text-reveal" style={{ animationDelay: "0.8s" }}>
                 <div className="w-8 h-px" style={{ background: `${accent}40` }} />
                 <div className="w-1.5 h-1.5 rounded-full" style={{ background: `${accent}50` }} />
                 <div className="w-8 h-px" style={{ background: `${accent}40` }} />
               </div>
 
               <p
-                className="text-[11px] sm:text-xs uppercase tracking-[0.4em] font-medium mb-4"
-                style={{ color: `${primary}60` }}
+                className="text-[11px] sm:text-xs uppercase tracking-[0.4em] font-medium mb-4 opacity-0 animate-text-reveal"
+                style={{ color: `${primary}60`, animationDelay: "0.9s" }}
               >
                 You are cordially invited to
               </p>
 
               <h1
-                className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-center"
-                style={{ color: primary }}
+                className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-center opacity-0 animate-text-reveal"
+                style={{ color: primary, animationDelay: "1.0s" }}
               >
                 {title}
               </h1>
 
               {subtitle && (
                 <p
-                  className="text-base sm:text-lg mt-3 font-light italic"
-                  style={{ color: `${primary}80` }}
+                  className="text-base sm:text-lg mt-3 font-light italic opacity-0 animate-text-reveal"
+                  style={{ color: `${primary}80`, animationDelay: "1.2s" }}
                 >
                   {subtitle}
                 </p>
               )}
 
-              {/* Small decorative divider below */}
-              <div className="flex items-center gap-2 mt-5">
+              {/* Decorative divider below */}
+              <div className="flex items-center gap-2 mt-5 opacity-0 animate-text-reveal" style={{ animationDelay: "1.3s" }}>
                 <div className="w-6 h-px" style={{ background: `${accent}30` }} />
                 <div className="w-1 h-1 rounded-full" style={{ background: `${accent}40` }} />
                 <div className="w-6 h-px" style={{ background: `${accent}30` }} />
@@ -199,7 +217,6 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
                 strokeWidth="0.5"
                 opacity="0.95"
               />
-              {/* Inner decorative V on flap */}
               <path
                 d="M50 6 L290 125 L530 6"
                 fill="none"
@@ -217,7 +234,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
             </svg>
           </div>
 
-          {/* Premium wax seal — larger */}
+          {/* Premium wax seal — with glow animation */}
           <div
             className="absolute z-10"
             style={{
@@ -227,13 +244,12 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
             }}
           >
             <div
-              className="relative flex items-center justify-center"
+              className="relative flex items-center justify-center animate-seal-glow"
               style={{
                 width: "clamp(56px, 8vw, 72px)",
                 height: "clamp(56px, 8vw, 72px)",
                 borderRadius: "50%",
                 background: `radial-gradient(circle at 35% 35%, ${primary}EE, ${primary})`,
-                boxShadow: `0 6px 20px ${primary}35, 0 2px 8px ${primary}25, inset 0 -3px 6px ${primary}50`,
               }}
             >
               {/* Seal rings */}
@@ -273,10 +289,10 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
           </div>
         </div>
 
-        {/* Bottom call to action */}
-        <div className="mt-10 animate-pulse">
+        {/* Bottom call to action — fades in after envelope */}
+        <div className="mt-10 opacity-0 animate-text-reveal" style={{ animationDelay: "1.6s" }}>
           <p
-            className="text-sm sm:text-base font-medium"
+            className="text-sm sm:text-base font-medium animate-pulse"
             style={{ color: `${primary}50` }}
           >
             Tap to open your invitation
