@@ -41,6 +41,7 @@ export interface Event {
   custom_domain: string | null;
   og_image: string | null;
   max_guests: number | null;
+  template_id: string | null;
   created_at: string;
   updated_at: string;
 }
