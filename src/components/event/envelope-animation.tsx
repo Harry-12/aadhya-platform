@@ -26,9 +26,6 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
     setTimeout(onOpen, 800);
   };
 
-  // Envelope dimensions
-  const envWidth = "min(360px, 85vw)";
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center select-none"
@@ -46,12 +43,12 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
         }}
       />
 
-      {/* Envelope container */}
+      {/* Envelope + text below it */}
       <div
-        className="relative cursor-pointer"
+        className="relative cursor-pointer flex flex-col items-center"
         onClick={handleOpen}
         style={{
-          width: envWidth,
+          width: "min(360px, 85vw)",
           opacity: entered ? 1 : 0,
           transform: entered ? "translateY(0) scale(1)" : "translateY(40px) scale(0.95)",
           transition: "opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s",
@@ -59,8 +56,9 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
       >
         {/* Shadow under envelope */}
         <div
-          className="absolute -bottom-5 left-[8%] right-[8%] h-8 rounded-[50%]"
+          className="absolute left-[8%] right-[8%] h-8 rounded-[50%]"
           style={{
+            bottom: "60px",
             background: `radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%)`,
             filter: "blur(10px)",
           }}
@@ -68,74 +66,49 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
 
         {/* SVG Envelope shape */}
         <svg
-          viewBox="0 0 360 280"
+          viewBox="0 0 360 260"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-auto relative z-10 drop-shadow-2xl"
+          className="w-full h-auto relative z-10"
           style={{
             filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.15))",
           }}
         >
-          {/* Envelope body - rounded rectangle */}
+          {/* Envelope body */}
           <rect
             x="0"
-            y="60"
+            y="50"
             width="360"
-            height="220"
+            height="210"
             rx="12"
             fill="#FFFDF9"
           />
 
-          {/* Envelope flap (triangle) */}
+          {/* Envelope flap (triangle on top) */}
           <path
-            d="M0 72 L180 170 L360 72 L360 60 Q360 48 348 48 L12 48 Q0 48 0 60 Z"
-            fill="#FFF8F0"
+            d="M0 62 L180 155 L360 62 L360 50 Q360 38 348 38 L12 38 Q0 38 0 50 Z"
+            fill="#FFF5ED"
           />
-          {/* Flap fold line shadow */}
+          {/* Flap fold line */}
           <path
-            d="M4 72 L180 166 L356 72"
-            stroke={`${primary}15`}
+            d="M4 62 L180 151 L356 62"
+            stroke={`${primary}12`}
             strokeWidth="1"
             fill="none"
           />
-
-          {/* Inner card area with slight inset look */}
-          <rect
-            x="24"
-            y="90"
-            width="312"
-            height="176"
-            rx="6"
-            fill="none"
-            stroke={`${accent}20`}
-            strokeWidth="0.75"
-          />
         </svg>
 
-        {/* Content overlay positioned on the envelope body */}
+        {/* Content on the envelope body */}
         <div
-          className="absolute left-0 right-0 flex flex-col items-center justify-center px-12 sm:px-16"
+          className="absolute left-0 right-0 flex flex-col items-center justify-center px-10 sm:px-14 z-20"
           style={{
-            top: "38%",
-            bottom: "4%",
+            top: "45%",
+            bottom: "20%",
           }}
         >
-          {/* Small envelope icon */}
-          <div className="mb-4">
-            <svg
-              width="32"
-              height="24"
-              viewBox="0 0 32 24"
-              fill="none"
-            >
-              <rect x="0.5" y="0.5" width="31" height="23" rx="3" stroke={accent} strokeWidth="0.8" fill="none" />
-              <path d="M0.5 0.5L16 14L31.5 0.5" stroke={accent} strokeWidth="0.8" />
-            </svg>
-          </div>
-
           {/* "You are invited to" */}
           <p
-            className="text-[9px] sm:text-[11px] uppercase tracking-[0.35em] font-medium mb-3"
+            className="text-[9px] sm:text-[11px] uppercase tracking-[0.35em] font-medium mb-2"
             style={{ color: `${primary}70` }}
           >
             You are invited to
@@ -143,7 +116,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
 
           {/* Event title */}
           <h1
-            className="font-display text-xl sm:text-2xl font-bold leading-snug text-center mb-2"
+            className="font-display text-lg sm:text-2xl font-bold leading-snug text-center mb-1"
             style={{ color: primary }}
           >
             {title}
@@ -152,56 +125,21 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
           {/* Subtitle */}
           {subtitle && (
             <p
-              className="text-xs sm:text-sm font-light italic mb-3"
+              className="text-xs sm:text-sm font-light italic"
               style={{ color: `${primary}60` }}
             >
               {subtitle}
             </p>
           )}
-
-          {/* Divider */}
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-6 h-px" style={{ background: `${accent}45` }} />
-            <div className="w-1 h-1" style={{ background: `${accent}50`, transform: "rotate(45deg)" }} />
-            <div className="w-6 h-px" style={{ background: `${accent}45` }} />
-          </div>
-
-          {/* Tap to open */}
-          <p
-            className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] font-medium"
-            style={{ color: accent }}
-          >
-            Tap to open
-          </p>
         </div>
 
-        {/* Wax seal on the flap */}
-        <div
-          className="absolute z-20"
-          style={{
-            top: "28%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
+        {/* Tap to open - positioned BELOW the envelope */}
+        <p
+          className="mt-5 text-[10px] sm:text-xs uppercase tracking-[0.3em] font-medium z-10"
+          style={{ color: "rgba(255,255,255,0.7)" }}
         >
-          <div
-            className="rounded-full flex items-center justify-center"
-            style={{
-              width: "36px",
-              height: "36px",
-              background: `radial-gradient(circle at 40% 35%, ${primary}EE, ${primary})`,
-              boxShadow: `0 2px 8px ${primary}50, inset 0 1px 2px rgba(255,255,255,0.2)`,
-            }}
-          >
-            {/* Heart on seal */}
-            <svg width="14" height="13" viewBox="0 0 14 13" fill="none">
-              <path
-                d="M7 12C7 12 1 8 1 4.5C1 2.5 3 1 5 2.5C5.8 3.1 6.5 4 7 4.5C7.5 4 8.2 3.1 9 2.5C11 1 13 2.5 13 4.5C13 8 7 12 7 12Z"
-                fill="rgba(255,255,255,0.85)"
-              />
-            </svg>
-          </div>
-        </div>
+          Tap to open
+        </p>
       </div>
     </div>
   );
