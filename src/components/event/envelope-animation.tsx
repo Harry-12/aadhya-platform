@@ -128,7 +128,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
             {/* Subtitle */}
             {subtitle && (
               <p
-                className="text-sm font-light italic mb-4"
+                className="text-sm font-light italic mb-4 text-center"
                 style={{ color: `${primary}70` }}
               >
                 {subtitle}
