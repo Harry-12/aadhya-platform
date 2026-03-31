@@ -271,11 +271,11 @@ export default function EventPageClient({ event }: EventPageClientProps) {
                 </div>
               </div>
               <div className="mt-8 flex flex-wrap justify-center gap-3 animate-slide-up">
-                <a href="#rsvp" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg cursor-pointer hover:bg-white/20 transition-colors">
+                <a href="#countdown" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg cursor-pointer hover:bg-white/20 transition-colors">
                   <CalendarIcon size={16} />
                   {formatDate(event.date)}
                 </a>
-                <a href="#rsvp" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg cursor-pointer hover:bg-white/20 transition-colors">
+                <a href="#countdown" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg cursor-pointer hover:bg-white/20 transition-colors">
                   <ClockIcon size={16} />
                   {formatTime(event.time)}{event.end_time ? ` – ${formatTime(event.end_time)}` : ""}
                 </a>
@@ -705,53 +705,7 @@ export default function EventPageClient({ event }: EventPageClientProps) {
         </section>
       )}
 
-      {/* Share FAB */}
-      <div className="fixed bottom-6 right-6 z-40">
-        <div className="relative">
-          {showShareMenu && (
-            <div className="absolute bottom-16 right-0 card p-3 space-y-1.5 w-56 shadow-2xl animate-in slide-in-from-bottom-2">
-              <p className="text-xs font-semibold text-charcoal-muted uppercase tracking-wider px-3 py-1">Share this event</p>
-              <a
-                href={getWhatsAppShareUrl(eventUrl, event.title, event.date)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-green-50 transition-colors text-sm text-charcoal"
-              >
-                <WhatsAppIcon size={18} className="text-green-600" />
-                WhatsApp
-              </a>
-              <a
-                href={getSmsShareUrl(eventUrl, event.title)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-blue-50 transition-colors text-sm text-charcoal"
-              >
-                <MessageCircleIcon size={18} className="text-blue-600" />
-                SMS
-              </a>
-              <a
-                href={getEmailShareUrl(eventUrl, event.title, event.date)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 transition-colors text-sm text-charcoal"
-              >
-                <MailIcon size={18} className="text-red-600" />
-                Email
-              </a>
-              <button
-                onClick={copyLink}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-charcoal/5 transition-colors text-sm text-charcoal w-full"
-              >
-                <CopyIcon size={18} className="text-charcoal-muted" />
-                Copy Link
-              </button>
-            </div>
-          )}
-          <button
-            onClick={() => setShowShareMenu(!showShareMenu)}
-            className="w-14 h-14 rounded-full text-white shadow-lg flex items-center justify-center hover:shadow-xl hover:scale-105 transition-all"
-            style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.accent})` }}
-          >
-            <ShareIcon size={22} />
-          </button>
-        </div>
-      </div>
+      {/* Share FAB - hidden from public guest view, only available to host in dashboard */}
 
       {/* Footer */}
       <footer className="py-12 text-center">
