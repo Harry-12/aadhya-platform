@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${event.title}${event.subtitle ? ` ${event.subtitle}` : ""}`,
     description: event.description || `Join us for ${event.title} on ${formatDate(event.date)}`,
     openGraph: {
-      title: event.title,
+      title: `${event.title}${event.subtitle ? ` — ${event.subtitle}` : ""}`,
       description: event.description || `You're invited to ${event.title}`,
       images: event.og_image || event.cover_image ? [event.og_image || event.cover_image] : [],
     },
