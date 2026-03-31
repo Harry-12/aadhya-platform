@@ -312,35 +312,7 @@ export default function EventPageClient({ event }: EventPageClientProps) {
         </section>
       )}
 
-      {/* Attending count - social proof like Partiful */}
-      {yesCount > 0 && (
-        <div className="flex justify-center pb-6">
-          <div className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-white shadow-sm border border-gold/10">
-            <div className="flex -space-x-2">
-              {event.rsvps
-                .filter((r) => r.status === "yes")
-                .slice(0, 5)
-                .map((r, i) => (
-                  <div
-                    key={r.id}
-                    className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white"
-                    style={{ background: theme.primary, zIndex: 5 - i }}
-                  >
-                    {r.name.charAt(0).toUpperCase()}
-                  </div>
-                ))}
-              {yesCount > 5 && (
-                <div className="w-7 h-7 rounded-full border-2 border-white bg-charcoal/10 flex items-center justify-center text-[10px] font-bold text-charcoal-light">
-                  +{yesCount - 5}
-                </div>
-              )}
-            </div>
-            <span className="text-sm font-medium text-charcoal">
-              {yesCount} going{maybeCount > 0 ? ` · ${maybeCount} maybe` : ""}
-            </span>
-          </div>
-        </div>
-      )}
+      {/* Attending count - hidden from public view, only visible to host */}
 
       {/* Countdown */}
       {event.settings.showCountdown && (
@@ -642,7 +614,7 @@ export default function EventPageClient({ event }: EventPageClientProps) {
             <h2 className="font-display text-2xl font-bold text-charcoal text-center mb-2">Wishes & Messages</h2>
             <p className="text-charcoal-light text-center text-sm mb-8">Leave your blessings and good wishes</p>
 
-            <form onSubmit={handleWishSubmit} className="card p-5 space-y-3 mb-8 shadow-sm">
+            <form onSubmit={handleWishSubmit} className="card p-5 space-y-3 shadow-sm">
               <Input value={wishName} onChange={(e) => setWishName(e.target.value)} placeholder="Your name" required />
               <Textarea value={wishText} onChange={(e) => setWishText(e.target.value)} placeholder="Write your wish..." rows={3} required />
               <button
@@ -660,28 +632,7 @@ export default function EventPageClient({ event }: EventPageClientProps) {
               </button>
             </form>
 
-            <div className="space-y-3">
-              {wishes.map((w) => (
-                <div key={w.id} className="card p-4 flex gap-3 hover:shadow-sm transition-shadow">
-                  <Avatar name={w.name} size="sm" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-sm font-semibold text-charcoal">{w.name}</p>
-                      <p className="text-[10px] text-charcoal-muted">
-                        {new Date(w.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                      </p>
-                    </div>
-                    <p className="text-sm text-charcoal-light mt-0.5">{w.text}</p>
-                  </div>
-                </div>
-              ))}
-              {wishes.length === 0 && (
-                <div className="text-center py-8">
-                  <span className="text-3xl mb-2 block">💌</span>
-                  <p className="text-charcoal-muted text-sm">Be the first to leave a wish!</p>
-                </div>
-              )}
-            </div>
+            {/* Wishes are only visible to the host in the dashboard */}
           </div>
         </section>
       )}
