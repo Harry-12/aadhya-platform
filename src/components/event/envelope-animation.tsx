@@ -10,122 +10,124 @@ interface EnvelopeAnimationProps {
 }
 
 export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAnimationProps) {
-  const [visible, setVisible] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
+  const [opened, setOpened] = useState(false);
   const [entered, setEntered] = useState(false);
   const primary = theme?.primary || "#8B1A1A";
   const accent = theme?.accent || "#D4A574";
   const bg = theme?.background || "#FFF8F0";
 
   useEffect(() => {
-    const t = setTimeout(() => setEntered(true), 50);
+    const t = setTimeout(() => setEntered(true), 100);
     return () => clearTimeout(t);
   }, []);
 
   const handleOpen = () => {
-    if (fadeOut) return;
-    setFadeOut(true);
-    setTimeout(() => {
-      setVisible(false);
-      onOpen();
-    }, 600);
+    if (opened) return;
+    setOpened(true);
+    setTimeout(onOpen, 1400);
   };
-
-  if (!visible) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer select-none"
-      style={{
-        background: `linear-gradient(135deg, ${primary} 0%, ${accent}88 50%, ${primary} 100%)`,
-        opacity: fadeOut ? 0 : 1,
-        transition: "opacity 0.6s ease",
-      }}
-      onClick={handleOpen}
+      className="fixed inset-0 z-50 flex items-center justify-center select-none"
+      style={{ background: bg }}
     >
+      {/* The greeting card */}
       <div
-        className="text-center px-8 max-w-lg"
+        className="relative cursor-pointer"
         style={{
+          width: "min(320px, 75vw)",
+          height: "min(440px, 100vw)",
+          perspective: "1200px",
           opacity: entered ? 1 : 0,
-          transform: entered ? "translateY(0)" : "translateY(20px)",
+          transform: entered ? "translateY(0)" : "translateY(30px)",
           transition: "opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s",
         }}
+        onClick={handleOpen}
       >
-        {/* Simple line */}
-        <div className="w-12 h-px mx-auto mb-8" style={{ background: "rgba(255,255,255,0.4)" }} />
-
-        {/* Small label */}
-        <p
-          className="text-[11px] sm:text-xs uppercase tracking-[0.5em] mb-6"
-          style={{
-            color: "rgba(255,255,255,0.6)",
-            opacity: entered ? 1 : 0,
-            transition: "opacity 0.8s ease 0.4s",
-          }}
-        >
-          You are invited
-        </p>
-
-        {/* Event title */}
-        <h1
-          className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4"
-          style={{
-            color: "white",
-            opacity: entered ? 1 : 0,
-            transition: "opacity 0.8s ease 0.6s",
-          }}
-        >
-          {title}
-        </h1>
-
-        {/* Subtitle */}
-        {subtitle && (
-          <p
-            className="text-base sm:text-lg font-light italic mb-8"
-            style={{
-              color: "rgba(255,255,255,0.7)",
-              opacity: entered ? 1 : 0,
-              transition: "opacity 0.8s ease 0.8s",
-            }}
-          >
-            {subtitle}
-          </p>
-        )}
-
-        {/* Simple line */}
+        {/* Card shadow on the surface */}
         <div
-          className="w-12 h-px mx-auto mb-10"
+          className="absolute -bottom-4 left-[10%] right-[10%] h-8 rounded-[50%]"
           style={{
-            background: "rgba(255,255,255,0.4)",
-            opacity: entered ? 1 : 0,
-            transition: "opacity 0.8s ease 0.9s",
+            background: `radial-gradient(ellipse, ${primary}20 0%, transparent 70%)`,
+            filter: "blur(8px)",
+            transition: "opacity 0.8s ease",
+            opacity: opened ? 0 : 1,
           }}
         />
 
-        {/* CTA */}
-        <button
-          className="px-8 py-3 rounded-full text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:scale-105 active:scale-95"
+        {/* Right side of card (stays in place - this is the "back" page visible when opened) */}
+        <div
+          className="absolute inset-0 rounded-r-2xl overflow-hidden"
           style={{
-            background: "rgba(255,255,255,0.15)",
-            color: "rgba(255,255,255,0.9)",
-            border: "1px solid rgba(255,255,255,0.3)",
-            backdropFilter: "blur(10px)",
-            opacity: entered ? 1 : 0,
-            transition: "opacity 0.8s ease 1s, transform 0.3s ease, background 0.3s ease",
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleOpen();
-          }}
-          onMouseEnter={(e) => {
-            (e.target as HTMLElement).style.background = "rgba(255,255,255,0.25)";
-          }}
-          onMouseLeave={(e) => {
-            (e.target as HTMLElement).style.background = "rgba(255,255,255,0.15)";
+            background: primary,
+            boxShadow: `0 8px 40px ${primary}20`,
           }}
         >
-          Open Invitation
-        </button>
+          {/* Subtle gradient for depth */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%, rgba(0,0,0,0.04) 100%)",
+            }}
+          />
+        </div>
+
+        {/* Left cover of the card (opens like a book) */}
+        <div
+          className="absolute inset-0 origin-left rounded-2xl overflow-hidden"
+          style={{
+            background: primary,
+            boxShadow: opened
+              ? `5px 0 20px ${primary}15`
+              : `0 8px 40px ${primary}25`,
+            transform: opened ? "rotateY(-160deg)" : "rotateY(0deg)",
+            transition: "transform 1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s ease",
+            transformStyle: "preserve-3d",
+            zIndex: 2,
+          }}
+        >
+          {/* Front face of the cover - completely plain */}
+          <div
+            className="absolute inset-0"
+            style={{ backfaceVisibility: "hidden" }}
+          >
+            {/* Subtle gradient for a premium paper feel */}
+            <div
+              className="absolute inset-0 rounded-2xl"
+              style={{
+                background: `linear-gradient(155deg, rgba(255,255,255,0.1) 0%, transparent 35%, rgba(0,0,0,0.05) 100%)`,
+              }}
+            />
+
+            {/* Very subtle spine shadow on the left edge */}
+            <div
+              className="absolute top-0 bottom-0 left-0 w-3"
+              style={{
+                background: `linear-gradient(90deg, rgba(0,0,0,0.08) 0%, transparent 100%)`,
+                borderRadius: "2xl 0 0 2xl",
+              }}
+            />
+          </div>
+
+          {/* Back face of the cover (inside left page - visible when opened) */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backfaceVisibility: "hidden",
+              transform: "rotateY(180deg)",
+              background: bg,
+            }}
+          >
+            {/* Very subtle inner texture */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(135deg, transparent 0%, ${accent}08 50%, transparent 100%)`,
+              }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
