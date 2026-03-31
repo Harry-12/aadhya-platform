@@ -467,8 +467,50 @@ export default function EventPageClient({ event }: EventPageClientProps) {
 
               {rsvpStatus === "yes" && event.settings.allowPlusOnes && (
                 <div className="grid grid-cols-2 gap-3">
-                  <Input label="Adults" type="number" min={1} value={rsvpAdults} onChange={(e) => setRsvpAdults(parseInt(e.target.value) || 1)} />
-                  <Input label="Kids" type="number" min={0} value={rsvpKids} onChange={(e) => setRsvpKids(parseInt(e.target.value) || 0)} />
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium text-charcoal">Adults</label>
+                    <div className="flex items-center rounded-xl border border-gold/30 overflow-hidden bg-white">
+                      <button
+                        type="button"
+                        onClick={() => setRsvpAdults(Math.max(1, rsvpAdults - 1))}
+                        className="w-11 h-11 flex items-center justify-center text-lg font-semibold hover:bg-cream transition-colors shrink-0"
+                        style={{ color: theme.primary }}
+                      >
+                        −
+                      </button>
+                      <span className="flex-1 text-center font-semibold text-charcoal text-base tabular-nums">{rsvpAdults}</span>
+                      <button
+                        type="button"
+                        onClick={() => setRsvpAdults(rsvpAdults + 1)}
+                        className="w-11 h-11 flex items-center justify-center text-lg font-semibold hover:bg-cream transition-colors shrink-0"
+                        style={{ color: theme.primary }}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium text-charcoal">Kids</label>
+                    <div className="flex items-center rounded-xl border border-gold/30 overflow-hidden bg-white">
+                      <button
+                        type="button"
+                        onClick={() => setRsvpKids(Math.max(0, rsvpKids - 1))}
+                        className="w-11 h-11 flex items-center justify-center text-lg font-semibold hover:bg-cream transition-colors shrink-0"
+                        style={{ color: theme.primary }}
+                      >
+                        −
+                      </button>
+                      <span className="flex-1 text-center font-semibold text-charcoal text-base tabular-nums">{rsvpKids}</span>
+                      <button
+                        type="button"
+                        onClick={() => setRsvpKids(rsvpKids + 1)}
+                        className="w-11 h-11 flex items-center justify-center text-lg font-semibold hover:bg-cream transition-colors shrink-0"
+                        style={{ color: theme.primary }}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
 

@@ -30,6 +30,9 @@ const config: Config = {
         "text-reveal": "textReveal 0.8s ease-out 0.6s forwards",
         "gentle-float": "gentleFloat 4s ease-in-out infinite",
         "shimmer": "shimmer 3s ease-in-out infinite",
+        "flap-open": "flapOpen 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "card-slide-up": "cardSlideUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards",
+        "seal-fade": "sealFade 0.5s ease-out forwards",
       },
       keyframes: {
         floatDown: {
@@ -84,6 +87,18 @@ const config: Config = {
         shimmer: {
           "0%": { backgroundPosition: "-200% center" },
           "100%": { backgroundPosition: "200% center" },
+        },
+        flapOpen: {
+          "0%": { transform: "rotateX(0deg)" },
+          "100%": { transform: "rotateX(-180deg)" },
+        },
+        cardSlideUp: {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-70%)" },
+        },
+        sealFade: {
+          "0%": { opacity: "1", transform: "translate(-50%, 50%) scale(1)" },
+          "100%": { opacity: "0", transform: "translate(-50%, 50%) scale(0.5)" },
         },
       },
     },
