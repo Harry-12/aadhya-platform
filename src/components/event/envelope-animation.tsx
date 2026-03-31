@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 interface EnvelopeAnimationProps {
   title: string;
@@ -11,302 +10,294 @@ interface EnvelopeAnimationProps {
 }
 
 export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAnimationProps) {
-  const [stage, setStage] = useState<"closed" | "opening" | "card-out">("closed");
+  const [flipped, setFlipped] = useState(false);
+  const [showContent, setShowContent] = useState(false);
+  const [entered, setEntered] = useState(false);
   const primary = theme?.primary || "#8B1A1A";
   const accent = theme?.accent || "#D4A574";
   const bg = theme?.background || "#FFF8F0";
 
+  useEffect(() => {
+    const t = setTimeout(() => setEntered(true), 100);
+    return () => clearTimeout(t);
+  }, []);
+
   const handleOpen = () => {
-    if (stage !== "closed") return;
-    setStage("opening");
-    setTimeout(() => setStage("card-out"), 700);
-    setTimeout(onOpen, 2500);
+    if (flipped) return;
+    setFlipped(true);
+    setTimeout(() => setShowContent(true), 600);
+    setTimeout(onOpen, 2200);
   };
 
   const monogram = title.split(" ").map(w => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "FP";
-  const isOpening = stage === "opening" || stage === "card-out";
-  const cardOut = stage === "card-out";
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden select-none"
       style={{
-        background: `radial-gradient(ellipse at 50% 40%, ${bg} 0%, ${primary}08 100%)`,
+        background: `radial-gradient(ellipse at 50% 45%, ${bg} 0%, ${primary}0A 100%)`,
       }}
     >
-      <div className="text-center w-full px-4">
-        {/* Container for card + envelope stack */}
+      {/* Ambient glow */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: "50vw",
+          height: "50vw",
+          maxWidth: "600px",
+          maxHeight: "600px",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          background: `radial-gradient(circle, ${accent}0D 0%, transparent 70%)`,
+          filter: "blur(40px)",
+        }}
+      />
+
+      <div className="text-center w-full px-6">
+        {/* Card flip container */}
         <div
-          className="relative mx-auto"
+          className="relative mx-auto cursor-pointer"
           style={{
-            width: "min(380px, 88vw)",
-            height: "min(500px, 120vw)",
+            width: "min(400px, 85vw)",
+            height: "min(540px, 115vw)",
+            perspective: "1200px",
+            opacity: entered ? 1 : 0,
+            transform: entered ? "translateY(0)" : "translateY(40px)",
+            transition: "opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)",
           }}
+          onClick={handleOpen}
         >
-          {/* ─── INVITATION CARD (slides up from behind envelope) ─── */}
           <div
-            className="absolute left-[8%] right-[8%] rounded-2xl overflow-hidden"
+            className="relative w-full h-full"
             style={{
-              height: "min(260px, 60vw)",
-              bottom: cardOut ? "calc(min(250px, 58vw) + 8%)" : "25%",
-              background: bg,
-              boxShadow: cardOut
-                ? `0 -4px 30px ${primary}12, 0 8px 40px ${primary}08`
-                : "none",
-              zIndex: 1,
-              opacity: cardOut ? 1 : 0,
-              transition: "bottom 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease",
+              transformStyle: "preserve-3d",
+              transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+              transition: "transform 0.9s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           >
-            {/* Elegant border */}
+            {/* ═══════════ FRONT OF CARD (the "envelope") ═══════════ */}
             <div
-              className="absolute inset-[10px] sm:inset-[14px] rounded-xl"
-              style={{ border: `1px solid ${accent}35` }}
-            />
-
-            {/* Tiny corner diamonds */}
-            {[
-              { top: "10px", left: "10px" },
-              { top: "10px", right: "10px" },
-              { bottom: "10px", left: "10px" },
-              { bottom: "10px", right: "10px" },
-            ].map((pos, i) => (
-              <div
-                key={i}
-                className="absolute w-2 h-2 sm:w-2.5 sm:h-2.5"
-                style={{
-                  ...pos,
-                  background: accent,
-                  opacity: 0.25,
-                  transform: "rotate(45deg)",
-                } as React.CSSProperties}
-              />
-            ))}
-
-            {/* Card text */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-8 sm:px-12">
-              {/* Decorative line */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-[0.5px]" style={{ background: `${accent}50` }} />
-                <div className="w-1.5 h-1.5 rounded-full" style={{ background: `${accent}40` }} />
-                <div className="w-8 h-[0.5px]" style={{ background: `${accent}50` }} />
-              </div>
-
-              <p
-                className="text-[9px] sm:text-[11px] uppercase tracking-[0.35em] font-medium mb-2"
-                style={{ color: `${primary}60` }}
-              >
-                You are cordially invited
-              </p>
-
-              <h1
-                className="font-display text-xl sm:text-2xl md:text-3xl font-bold leading-snug text-center"
-                style={{ color: primary }}
-              >
-                {title}
-              </h1>
-
-              {subtitle && (
-                <p className="text-[11px] sm:text-sm mt-2 font-light italic" style={{ color: `${primary}70` }}>
-                  {subtitle}
-                </p>
-              )}
-
-              <div className="flex items-center gap-2 mt-3">
-                <div className="w-6 h-[0.5px]" style={{ background: `${accent}40` }} />
-                <div className="w-1 h-1 rounded-full" style={{ background: `${accent}35` }} />
-                <div className="w-6 h-[0.5px]" style={{ background: `${accent}40` }} />
-              </div>
-            </div>
-          </div>
-
-          {/* ─── ENVELOPE ─── */}
-          <div
-            className={cn(
-              "absolute bottom-0 left-0 right-0 cursor-pointer",
-              stage === "closed" && "animate-envelope-enter",
-              stage === "closed" && "animate-gentle-float hover:scale-[1.015] transition-transform duration-300"
-            )}
-            style={{
-              height: "min(250px, 58vw)",
-              zIndex: 5,
-            }}
-            onClick={handleOpen}
-          >
-            {/* Envelope shadow (separate for realistic effect) */}
-            <div
-              className="absolute -bottom-3 left-[5%] right-[5%] h-8 rounded-[50%]"
+              className="absolute inset-0 rounded-3xl overflow-hidden"
               style={{
-                background: `radial-gradient(ellipse, ${primary}18 0%, transparent 70%)`,
-                filter: "blur(8px)",
-              }}
-            />
-
-            {/* Envelope body */}
-            <div
-              className="absolute inset-0 rounded-xl sm:rounded-2xl overflow-hidden"
-              style={{
+                backfaceVisibility: "hidden",
                 background: primary,
-                boxShadow: `0 20px 50px ${primary}25`,
+                boxShadow: `0 30px 80px ${primary}25, 0 10px 30px ${primary}15`,
               }}
             >
-              {/* Subtle texture/grain overlay */}
+              {/* Gradient overlay for depth */}
               <div
                 className="absolute inset-0"
                 style={{
-                  background: `linear-gradient(175deg, rgba(255,255,255,0.08) 0%, transparent 30%, rgba(0,0,0,0.06) 100%)`,
+                  background: `linear-gradient(165deg, rgba(255,255,255,0.1) 0%, transparent 40%, rgba(0,0,0,0.08) 100%)`,
                 }}
               />
 
-              {/* Inner lining (shows when flap opens) */}
+              {/* Decorative top pattern band */}
               <div
-                className="absolute top-0 left-0 right-0 rounded-t-xl sm:rounded-t-2xl overflow-hidden transition-opacity duration-700"
+                className="absolute top-0 left-0 right-0 h-2"
                 style={{
-                  height: "45%",
-                  opacity: isOpening ? 1 : 0,
+                  background: `repeating-linear-gradient(90deg, ${accent}40 0px, ${accent}40 8px, transparent 8px, transparent 16px)`,
                 }}
-              >
-                {/* Lining: elegant gradient pattern instead of drawn flowers */}
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: `linear-gradient(135deg, ${bg} 0%, ${accent}18 25%, ${bg} 50%, ${accent}18 75%, ${bg} 100%)`,
-                  }}
-                />
-                {/* Ornamental border on lining */}
-                <div className="absolute inset-2 rounded-lg" style={{ border: `0.5px solid ${accent}30` }} />
-              </div>
+              />
 
-              {/* Diagonal fold lines */}
-              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 380 250" fill="none" preserveAspectRatio="none">
-                {/* Bottom front V-fold */}
-                <path d="M0 250 L190 105 L380 250 Z" fill={primary} />
-                {/* Slight lighter shade on front fold for depth */}
-                <path d="M0 250 L190 105 L380 250 Z" fill="rgba(255,255,255,0.04)" />
-                {/* Fold crease lines */}
-                <path d="M0 250 L190 105 L380 250" stroke={`${accent}15`} strokeWidth="0.5" fill="none" />
-                <path d="M0 0 L190 135" stroke={`${accent}08`} strokeWidth="0.3" />
-                <path d="M380 0 L190 135" stroke={`${accent}08`} strokeWidth="0.3" />
-              </svg>
-
-              {/* "You are invited" text on envelope */}
+              {/* Decorative bottom pattern band */}
               <div
-                className="absolute inset-0 flex items-center justify-center opacity-0 animate-text-reveal"
-                style={{ animationDelay: "0.8s", zIndex: 3 }}
-              >
-                <div className="text-center" style={{ marginTop: "-12%" }}>
-                  <p
-                    className="font-display text-lg sm:text-2xl italic font-light"
-                    style={{ color: `${accent}BB` }}
+                className="absolute bottom-0 left-0 right-0 h-2"
+                style={{
+                  background: `repeating-linear-gradient(90deg, ${accent}40 0px, ${accent}40 8px, transparent 8px, transparent 16px)`,
+                }}
+              />
+
+              {/* Inner border frame */}
+              <div
+                className="absolute rounded-2xl"
+                style={{
+                  inset: "20px",
+                  border: `1px solid ${accent}30`,
+                }}
+              />
+
+              {/* Second inner border */}
+              <div
+                className="absolute rounded-xl"
+                style={{
+                  inset: "28px",
+                  border: `0.5px solid ${accent}18`,
+                }}
+              />
+
+              {/* Content */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center px-12 sm:px-16">
+                {/* Top ornament */}
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="h-px flex-1 max-w-[60px]" style={{ background: `${accent}50` }} />
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="6" y="0" width="6" height="6" transform="rotate(45, 6, 3)" fill={accent} opacity="0.4" />
+                  </svg>
+                  <div className="h-px flex-1 max-w-[60px]" style={{ background: `${accent}50` }} />
+                </div>
+
+                {/* Wax seal / monogram circle */}
+                <div
+                  className="relative mb-8"
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "50%",
+                    background: `radial-gradient(circle at 40% 38%, #EDD48E, #C9A24D, #A07B28)`,
+                    boxShadow: `0 6px 24px rgba(160,120,30,0.4), inset 0 2px 4px rgba(255,255,255,0.2)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <div className="absolute rounded-full" style={{ inset: "5px", border: "1px solid rgba(255,255,255,0.2)" }} />
+                  <div className="absolute rounded-full" style={{ inset: "9px", border: "0.5px solid rgba(255,255,255,0.1)" }} />
+                  <span
+                    className="font-display font-bold text-2xl relative z-10"
+                    style={{
+                      color: "#FFF5D6",
+                      letterSpacing: "0.08em",
+                      textShadow: "0 1px 3px rgba(100,70,10,0.3)",
+                    }}
                   >
-                    You are invited!
-                  </p>
+                    {monogram}
+                  </span>
+                </div>
+
+                {/* Main text */}
+                <p
+                  className="font-display text-2xl sm:text-3xl italic font-light mb-3"
+                  style={{ color: `${accent}DD` }}
+                >
+                  You are invited!
+                </p>
+
+                <p
+                  className="text-[10px] sm:text-xs uppercase tracking-[0.4em] font-medium"
+                  style={{ color: `${accent}70` }}
+                >
+                  Tap to reveal
+                </p>
+
+                {/* Bottom ornament */}
+                <div className="flex items-center gap-3 mt-8">
+                  <div className="h-px flex-1 max-w-[60px]" style={{ background: `${accent}50` }} />
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="6" y="0" width="6" height="6" transform="rotate(45, 6, 3)" fill={accent} opacity="0.4" />
+                  </svg>
+                  <div className="h-px flex-1 max-w-[60px]" style={{ background: `${accent}50` }} />
                 </div>
               </div>
             </div>
 
-            {/* ─── TOP FLAP ─── */}
+            {/* ═══════════ BACK OF CARD (the invitation) ═══════════ */}
             <div
-              className="absolute -top-px left-0 right-0 origin-top"
+              className="absolute inset-0 rounded-3xl overflow-hidden"
               style={{
-                height: "54%",
-                zIndex: isOpening ? 0 : 6,
-                perspective: "1200px",
-                pointerEvents: "none",
+                backfaceVisibility: "hidden",
+                transform: "rotateY(180deg)",
+                background: bg,
+                boxShadow: `0 30px 80px ${primary}20, 0 10px 30px ${primary}10`,
               }}
             >
+              {/* Top colored accent bar */}
               <div
-                className="w-full h-full origin-top"
+                className="absolute top-0 left-0 right-0"
                 style={{
-                  transform: isOpening ? "rotateX(-180deg)" : "rotateX(0deg)",
-                  transition: "transform 0.65s cubic-bezier(0.4, 0, 0.2, 1)",
-                  backfaceVisibility: "hidden",
+                  height: "6px",
+                  background: `linear-gradient(90deg, ${primary}, ${accent}, ${primary})`,
+                }}
+              />
+
+              {/* Bottom colored accent bar */}
+              <div
+                className="absolute bottom-0 left-0 right-0"
+                style={{
+                  height: "6px",
+                  background: `linear-gradient(90deg, ${primary}, ${accent}, ${primary})`,
+                }}
+              />
+
+              {/* Border frame */}
+              <div
+                className="absolute rounded-2xl"
+                style={{
+                  inset: "18px",
+                  border: `1px solid ${accent}28`,
+                }}
+              />
+
+              {/* Content */}
+              <div
+                className="absolute inset-0 flex flex-col items-center justify-center px-10 sm:px-14"
+                style={{
+                  opacity: showContent ? 1 : 0,
+                  transform: showContent ? "scale(1)" : "scale(0.95)",
+                  transition: "opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s",
                 }}
               >
-                <svg viewBox="0 0 380 135" className="w-full h-full" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="flapG" x1="50%" y1="100%" x2="50%" y2="0%">
-                      <stop offset="0%" stopColor={primary} />
-                      <stop offset="80%" stopColor={primary} stopOpacity="0.92" />
-                    </linearGradient>
-                  </defs>
-                  <path d="M0 0 L380 0 L190 128 Z" fill="url(#flapG)" />
-                  <path d="M2 1 L190 126 L378 1" stroke={`${accent}12`} strokeWidth="0.4" fill="none" />
-                </svg>
-              </div>
-            </div>
+                {/* Top ornament */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-10 h-px" style={{ background: `${accent}45` }} />
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ background: `${accent}50` }} />
+                  <div className="w-10 h-px" style={{ background: `${accent}45` }} />
+                </div>
 
-            {/* ─── WAX SEAL (gold) ─── */}
-            <div
-              className="absolute transition-all duration-500"
-              style={{
-                left: "50%",
-                top: 0,
-                transform: `translate(-50%, -42%) scale(${isOpening ? 0 : 1})`,
-                opacity: isOpening ? 0 : 1,
-                zIndex: 20,
-              }}
-            >
-              <div
-                className={cn(stage === "closed" && "animate-seal-glow")}
-                style={{
-                  width: "clamp(52px, 8vw, 68px)",
-                  height: "clamp(52px, 8vw, 68px)",
-                  borderRadius: "50%",
-                  background: "radial-gradient(circle at 36% 36%, #EDD48E, #C9A24D, #9E7A2A)",
-                  boxShadow: "0 5px 20px rgba(170, 130, 40, 0.45), inset 0 1px 3px rgba(255,255,255,0.25)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative",
-                }}
-              >
-                {/* Inner rings */}
-                <div className="absolute rounded-full" style={{ inset: "4px", border: "1px solid rgba(255,255,255,0.22)" }} />
-                <div className="absolute rounded-full" style={{ inset: "8px", border: "0.5px solid rgba(255,255,255,0.1)" }} />
+                <p
+                  className="text-[9px] sm:text-[11px] uppercase tracking-[0.4em] font-medium mb-4"
+                  style={{ color: `${primary}55` }}
+                >
+                  You are cordially invited to
+                </p>
 
-                {/* Scalloped edge dots */}
-                {[...Array(16)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute"
-                    style={{
-                      width: "2.5px",
-                      height: "2.5px",
-                      borderRadius: "50%",
-                      background: "rgba(255,255,255,0.12)",
-                      top: "50%",
-                      left: "50%",
-                      transform: `rotate(${i * 22.5}deg) translate(clamp(21px, 3.4vw, 28px)) translate(-50%, -50%)`,
-                    }}
-                  />
-                ))}
+                {/* Title */}
+                <h1
+                  className="font-display text-2xl sm:text-3xl md:text-4xl font-bold leading-snug text-center mb-3"
+                  style={{ color: primary }}
+                >
+                  {title}
+                </h1>
 
-                {/* Monogram */}
-                <span
-                  className="font-display font-bold relative z-10"
+                {subtitle && (
+                  <p
+                    className="text-sm sm:text-base font-light italic mb-4"
+                    style={{ color: `${primary}75` }}
+                  >
+                    {subtitle}
+                  </p>
+                )}
+
+                {/* Decorative divider */}
+                <div className="flex items-center gap-3 mt-2 mb-6">
+                  <div className="w-8 h-px" style={{ background: `${accent}35` }} />
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <rect x="8" y="0" width="7" height="7" transform="rotate(45, 8, 3.5)" fill={accent} opacity="0.3" />
+                  </svg>
+                  <div className="w-8 h-px" style={{ background: `${accent}35` }} />
+                </div>
+
+                {/* Monogram on the back too */}
+                <div
+                  className="flex items-center justify-center"
                   style={{
-                    color: "#FFF5D6",
-                    fontSize: "clamp(16px, 2.3vw, 22px)",
-                    letterSpacing: "0.06em",
-                    textShadow: "0 1px 2px rgba(100,70,10,0.35)",
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "50%",
+                    border: `1.5px solid ${accent}35`,
                   }}
                 >
-                  {monogram}
-                </span>
+                  <span
+                    className="font-display font-semibold text-sm"
+                    style={{ color: `${primary}60`, letterSpacing: "0.1em" }}
+                  >
+                    {monogram}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* CTA text */}
-        <div className="opacity-0 animate-text-reveal" style={{ animationDelay: "1.4s", marginTop: "12px" }}>
-          <p
-            className="text-[11px] sm:text-sm tracking-widest uppercase font-medium"
-            style={{ color: `${primary}45` }}
-          >
-            <span className="animate-pulse inline-block">Click to open</span>
-          </p>
         </div>
       </div>
     </div>
