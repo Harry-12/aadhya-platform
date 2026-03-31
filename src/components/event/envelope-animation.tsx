@@ -125,16 +125,6 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
               {title}
             </h1>
 
-            {/* Subtitle */}
-            {subtitle && (
-              <p
-                className="text-sm font-light italic mb-4 text-center"
-                style={{ color: `${primary}70` }}
-              >
-                {subtitle}
-              </p>
-            )}
-
             {/* Small divider */}
             <div className="flex items-center gap-2 mb-5">
               <div className="w-8 h-px" style={{ background: `${accent}60` }} />
