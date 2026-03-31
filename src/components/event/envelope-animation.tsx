@@ -67,9 +67,9 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
         <div
           className="relative rounded-xl overflow-hidden"
           style={{
-            background: `linear-gradient(170deg, ${accent}30 0%, ${primary}15 100%)`,
-            border: `2px solid ${accent}60`,
-            boxShadow: `0 4px 16px rgba(0,0,0,0.1), 0 12px 40px rgba(0,0,0,0.15)`,
+            background: `linear-gradient(170deg, #FFFDF8 0%, #FFF5EC 100%)`,
+            border: `2px solid ${accent}50`,
+            boxShadow: `0 4px 16px rgba(0,0,0,0.1), 0 12px 40px rgba(0,0,0,0.18)`,
             aspectRatio: "5 / 7",
           }}
         >
