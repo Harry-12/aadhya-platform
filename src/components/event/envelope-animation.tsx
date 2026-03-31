@@ -64,16 +64,29 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
           }}
         />
 
-        {/* SVG Envelope shape */}
+        {/* SVG Envelope shape — colorful using theme */}
         <svg
           viewBox="0 0 360 260"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-auto relative z-10"
           style={{
-            filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.15))",
+            filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.2))",
           }}
         >
+          <defs>
+            {/* Gradient for envelope body */}
+            <linearGradient id="envBody" x1="0" y1="50" x2="360" y2="260" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor={accent} />
+              <stop offset="100%" stopColor={`${accent}CC`} />
+            </linearGradient>
+            {/* Gradient for flap — slightly darker shade of primary */}
+            <linearGradient id="envFlap" x1="180" y1="38" x2="180" y2="155" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor={primary} />
+              <stop offset="100%" stopColor={`${primary}DD`} />
+            </linearGradient>
+          </defs>
+
           {/* Envelope body */}
           <rect
             x="0"
@@ -81,20 +94,42 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
             width="360"
             height="210"
             rx="12"
-            fill="#FFFDF9"
+            fill="url(#envBody)"
+          />
+
+          {/* Lighter inner area for text readability */}
+          <rect
+            x="20"
+            y="80"
+            width="320"
+            height="165"
+            rx="8"
+            fill="rgba(255,255,255,0.88)"
           />
 
           {/* Envelope flap (triangle on top) */}
           <path
             d="M0 62 L180 155 L360 62 L360 50 Q360 38 348 38 L12 38 Q0 38 0 50 Z"
-            fill="#FFF5ED"
+            fill="url(#envFlap)"
           />
-          {/* Flap fold line */}
+          {/* Flap fold line highlight */}
           <path
             d="M4 62 L180 151 L356 62"
-            stroke={`${primary}12`}
+            stroke="rgba(255,255,255,0.15)"
             strokeWidth="1"
             fill="none"
+          />
+
+          {/* Thin accent border on body */}
+          <rect
+            x="0"
+            y="50"
+            width="360"
+            height="210"
+            rx="12"
+            fill="none"
+            stroke={`${primary}30`}
+            strokeWidth="1"
           />
         </svg>
 
@@ -109,7 +144,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
           {/* "You are invited to" */}
           <p
             className="text-[9px] sm:text-[11px] uppercase tracking-[0.35em] font-medium mb-2"
-            style={{ color: `${primary}70` }}
+            style={{ color: `${primary}90` }}
           >
             You are invited to
           </p>
@@ -126,17 +161,17 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
           {subtitle && (
             <p
               className="text-xs sm:text-sm font-light italic"
-              style={{ color: `${primary}60` }}
+              style={{ color: `${primary}70` }}
             >
               {subtitle}
             </p>
           )}
         </div>
 
-        {/* Tap to open - positioned BELOW the envelope */}
+        {/* Tap to open - below the envelope */}
         <p
           className="mt-5 text-[10px] sm:text-xs uppercase tracking-[0.3em] font-medium z-10"
-          style={{ color: "rgba(255,255,255,0.7)" }}
+          style={{ color: "rgba(255,255,255,0.75)" }}
         >
           Tap to open
         </p>
