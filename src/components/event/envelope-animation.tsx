@@ -58,36 +58,35 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
         <div
           className="absolute left-[8%] right-[8%] h-8 rounded-[50%]"
           style={{
-            bottom: "60px",
-            background: `radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%)`,
+            bottom: "55px",
+            background: `radial-gradient(ellipse, rgba(0,0,0,0.35) 0%, transparent 70%)`,
             filter: "blur(10px)",
           }}
         />
 
-        {/* SVG Envelope shape — colorful using theme */}
+        {/* SVG Envelope shape — fully colorful */}
         <svg
           viewBox="0 0 360 260"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-auto relative z-10"
           style={{
-            filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.2))",
+            filter: "drop-shadow(0 10px 30px rgba(0,0,0,0.25))",
           }}
         >
           <defs>
-            {/* Gradient for envelope body */}
             <linearGradient id="envBody" x1="0" y1="50" x2="360" y2="260" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor={accent} />
-              <stop offset="100%" stopColor={`${accent}CC`} />
+              <stop offset="100%" stopColor={`${accent}EE`} />
             </linearGradient>
-            {/* Gradient for flap — slightly darker shade of primary */}
-            <linearGradient id="envFlap" x1="180" y1="38" x2="180" y2="155" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor={primary} />
-              <stop offset="100%" stopColor={`${primary}DD`} />
+            <linearGradient id="envFlap" x1="180" y1="38" x2="180" y2="160" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor={accent} />
+              <stop offset="60%" stopColor={`${accent}DD`} />
+              <stop offset="100%" stopColor={`${accent}BB`} />
             </linearGradient>
           </defs>
 
-          {/* Envelope body */}
+          {/* Envelope body — accent colored */}
           <rect
             x="0"
             y="50"
@@ -97,54 +96,63 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
             fill="url(#envBody)"
           />
 
-          {/* Lighter inner area for text readability */}
+          {/* Inner white card area where text goes */}
           <rect
-            x="20"
-            y="80"
-            width="320"
-            height="165"
+            x="28"
+            y="85"
+            width="304"
+            height="155"
             rx="8"
-            fill="rgba(255,255,255,0.88)"
+            fill="white"
           />
 
-          {/* Envelope flap (triangle on top) */}
+          {/* Thin gold/accent border on inner card */}
+          <rect
+            x="38"
+            y="95"
+            width="284"
+            height="135"
+            rx="4"
+            fill="none"
+            stroke={`${accent}60`}
+            strokeWidth="0.75"
+          />
+
+          {/* Envelope flap (triangle on top) — accent colored, slightly different shade */}
           <path
             d="M0 62 L180 155 L360 62 L360 50 Q360 38 348 38 L12 38 Q0 38 0 50 Z"
             fill="url(#envFlap)"
           />
-          {/* Flap fold line highlight */}
+
+          {/* Flap inner shadow/fold line */}
           <path
-            d="M4 62 L180 151 L356 62"
-            stroke="rgba(255,255,255,0.15)"
+            d="M6 63 L180 151 L354 63"
+            stroke="rgba(0,0,0,0.08)"
             strokeWidth="1"
             fill="none"
           />
 
-          {/* Thin accent border on body */}
-          <rect
-            x="0"
-            y="50"
-            width="360"
-            height="210"
-            rx="12"
+          {/* Flap highlight edge */}
+          <path
+            d="M0 62 L180 155 L360 62"
+            stroke="rgba(255,255,255,0.2)"
+            strokeWidth="0.5"
             fill="none"
-            stroke={`${primary}30`}
-            strokeWidth="1"
           />
         </svg>
 
-        {/* Content on the envelope body */}
+        {/* Content on the white inner area */}
         <div
-          className="absolute left-0 right-0 flex flex-col items-center justify-center px-10 sm:px-14 z-20"
+          className="absolute left-0 right-0 flex flex-col items-center justify-center px-12 sm:px-16 z-20"
           style={{
-            top: "45%",
-            bottom: "20%",
+            top: "42%",
+            bottom: "18%",
           }}
         >
           {/* "You are invited to" */}
           <p
             className="text-[9px] sm:text-[11px] uppercase tracking-[0.35em] font-medium mb-2"
-            style={{ color: `${primary}90` }}
+            style={{ color: `${accent}` }}
           >
             You are invited to
           </p>
@@ -161,7 +169,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
           {subtitle && (
             <p
               className="text-xs sm:text-sm font-light italic"
-              style={{ color: `${primary}70` }}
+              style={{ color: `${primary}80` }}
             >
               {subtitle}
             </p>
