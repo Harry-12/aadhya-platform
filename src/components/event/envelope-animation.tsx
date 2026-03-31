@@ -11,396 +11,301 @@ interface EnvelopeAnimationProps {
 }
 
 export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAnimationProps) {
-  const [opened, setOpened] = useState(false);
+  const [stage, setStage] = useState<"closed" | "opening" | "card-out">("closed");
   const primary = theme?.primary || "#8B1A1A";
   const accent = theme?.accent || "#D4A574";
   const bg = theme?.background || "#FFF8F0";
 
-  // Derive lighter/darker shades from primary for envelope body
-  const envelopeColor = primary;
-  const envelopeDark = `${primary}DD`;
-  const envelopeLight = `${primary}BB`;
-  const innerLining = bg;
-
   const handleOpen = () => {
-    setOpened(true);
-    setTimeout(onOpen, 1600);
+    if (stage !== "closed") return;
+    setStage("opening");
+    setTimeout(() => setStage("card-out"), 700);
+    setTimeout(onOpen, 2500);
   };
+
+  const monogram = title.split(" ").map(w => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "FP";
+  const isOpening = stage === "opening" || stage === "card-out";
+  const cardOut = stage === "card-out";
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden select-none"
       style={{
-        background: `linear-gradient(160deg, ${primary}18 0%, ${bg} 40%, ${accent}15 100%)`,
+        background: `radial-gradient(ellipse at 50% 40%, ${bg} 0%, ${primary}08 100%)`,
       }}
     >
-      {/* Subtle background sparkles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full animate-sparkle-twinkle"
-            style={{
-              width: i % 3 === 0 ? "3px" : "2px",
-              height: i % 3 === 0 ? "3px" : "2px",
-              background: i % 2 === 0 ? `${accent}80` : `${primary}40`,
-              left: `${8 + i * 7.5}%`,
-              top: `${12 + (i % 5) * 17}%`,
-              animationDelay: `${i * 0.4}s`,
-              animationDuration: `${2.5 + (i % 3) * 1.2}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Top text */}
       <div className="text-center w-full px-4">
-        <p
-          className="text-[10px] sm:text-xs uppercase tracking-[0.45em] font-medium mb-6 sm:mb-8 opacity-0 animate-text-reveal"
-          style={{ color: `${primary}60` }}
-        >
-          You have been invited
-        </p>
-
-        {/* Envelope container */}
+        {/* Container for card + envelope stack */}
         <div
-          className={cn(
-            "relative mx-auto cursor-pointer animate-envelope-enter",
-            !opened && "hover:scale-[1.02] transition-transform duration-300",
-            !opened && "animate-gentle-float",
-            opened && "pointer-events-none"
-          )}
+          className="relative mx-auto"
           style={{
-            width: "min(360px, 85vw)",
-            height: "min(260px, 62vw)",
+            width: "min(380px, 88vw)",
+            height: "min(500px, 120vw)",
           }}
-          onClick={!opened ? handleOpen : undefined}
         >
-          {/* === ENVELOPE BACK (bottom layer) === */}
+          {/* ─── INVITATION CARD (slides up from behind envelope) ─── */}
           <div
-            className="absolute inset-0 rounded-b-2xl rounded-t-sm"
+            className="absolute left-[8%] right-[8%] rounded-2xl overflow-hidden"
             style={{
-              background: `linear-gradient(180deg, ${envelopeColor} 0%, ${envelopeDark} 100%)`,
-              boxShadow: `0 20px 60px ${primary}30, 0 8px 24px ${primary}18`,
-            }}
-          />
-
-          {/* === INNER LINING visible when flap opens === */}
-          <div
-            className="absolute rounded-t-sm overflow-hidden"
-            style={{
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "50%",
-              background: innerLining,
+              height: "min(260px, 60vw)",
+              bottom: cardOut ? "calc(min(250px, 58vw) + 8%)" : "25%",
+              background: bg,
+              boxShadow: cardOut
+                ? `0 -4px 30px ${primary}12, 0 8px 40px ${primary}08`
+                : "none",
+              zIndex: 1,
+              opacity: cardOut ? 1 : 0,
+              transition: "bottom 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease",
             }}
           >
-            {/* Decorative floral/botanical SVG pattern inside */}
-            <svg
-              className="absolute inset-0 w-full h-full opacity-30"
-              viewBox="0 0 360 130"
-              fill="none"
-              preserveAspectRatio="xMidYMid slice"
-            >
-              {/* Center floral motif */}
-              <g transform="translate(180, 65)" opacity="0.6">
-                {[0, 60, 120, 180, 240, 300].map((deg) => (
-                  <ellipse
-                    key={deg}
-                    cx="0"
-                    cy="-18"
-                    rx="8"
-                    ry="18"
-                    fill={accent}
-                    opacity="0.4"
-                    transform={`rotate(${deg})`}
-                  />
-                ))}
-                <circle cx="0" cy="0" r="6" fill={accent} opacity="0.6" />
-              </g>
-              {/* Left branch */}
-              <g transform="translate(60, 80)" opacity="0.4">
-                <path d="M0 0 Q20 -30 50 -20" stroke={accent} strokeWidth="1.5" fill="none" />
-                <ellipse cx="50" cy="-20" rx="6" ry="10" fill={accent} opacity="0.3" transform="rotate(-30, 50, -20)" />
-                <path d="M15 -12 Q25 -35 40 -35" stroke={accent} strokeWidth="1" fill="none" />
-                <ellipse cx="40" cy="-35" rx="5" ry="8" fill={accent} opacity="0.25" transform="rotate(-15, 40, -35)" />
-              </g>
-              {/* Right branch (mirrored) */}
-              <g transform="translate(300, 80) scale(-1, 1)" opacity="0.4">
-                <path d="M0 0 Q20 -30 50 -20" stroke={accent} strokeWidth="1.5" fill="none" />
-                <ellipse cx="50" cy="-20" rx="6" ry="10" fill={accent} opacity="0.3" transform="rotate(-30, 50, -20)" />
-                <path d="M15 -12 Q25 -35 40 -35" stroke={accent} strokeWidth="1" fill="none" />
-                <ellipse cx="40" cy="-35" rx="5" ry="8" fill={accent} opacity="0.25" transform="rotate(-15, 40, -35)" />
-              </g>
-              {/* Small scattered leaves */}
-              {[
-                { x: 90, y: 30, r: 20 },
-                { x: 270, y: 25, r: -25 },
-                { x: 130, y: 100, r: 45 },
-                { x: 230, y: 95, r: -40 },
-              ].map((leaf, i) => (
-                <ellipse
-                  key={i}
-                  cx={leaf.x}
-                  cy={leaf.y}
-                  rx="4"
-                  ry="9"
-                  fill={accent}
-                  opacity="0.2"
-                  transform={`rotate(${leaf.r}, ${leaf.x}, ${leaf.y})`}
-                />
-              ))}
-            </svg>
-          </div>
-
-          {/* === INVITATION CARD (slides up when opened) === */}
-          <div
-            className={cn(
-              "absolute left-[8%] right-[8%] rounded-xl transition-all overflow-hidden",
-              opened ? "animate-card-slide-up" : ""
-            )}
-            style={{
-              top: "8%",
-              bottom: "8%",
-              background: `linear-gradient(170deg, ${bg} 0%, #FFFFFF 50%, ${bg} 100%)`,
-              boxShadow: `0 4px 20px ${primary}10`,
-              zIndex: 2,
-            }}
-          >
-            {/* Card inner border */}
+            {/* Elegant border */}
             <div
-              className="absolute inset-2 sm:inset-3 rounded-lg border"
-              style={{ borderColor: `${accent}30` }}
-            />
-            <div
-              className="absolute inset-3 sm:inset-4 rounded-md border border-dashed"
-              style={{ borderColor: `${accent}18` }}
+              className="absolute inset-[10px] sm:inset-[14px] rounded-xl"
+              style={{ border: `1px solid ${accent}35` }}
             />
 
-            {/* Corner ornaments */}
+            {/* Tiny corner diamonds */}
             {[
-              "top-2.5 left-2.5 sm:top-3.5 sm:left-3.5",
-              "top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 rotate-90",
-              "bottom-2.5 left-2.5 sm:bottom-3.5 sm:left-3.5 -rotate-90",
-              "bottom-2.5 right-2.5 sm:bottom-3.5 sm:right-3.5 rotate-180",
+              { top: "10px", left: "10px" },
+              { top: "10px", right: "10px" },
+              { bottom: "10px", left: "10px" },
+              { bottom: "10px", right: "10px" },
             ].map((pos, i) => (
-              <svg
+              <div
                 key={i}
-                className={`absolute ${pos} w-5 h-5 sm:w-6 sm:h-6`}
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path d="M2 2 Q12 2 12 8 Q12 2 22 2" stroke={accent} strokeWidth="0.8" opacity="0.5" />
-                <path d="M2 2 Q2 12 8 12 Q2 12 2 22" stroke={accent} strokeWidth="0.8" opacity="0.5" />
-                <circle cx="2" cy="2" r="1.5" fill={accent} opacity="0.3" />
-              </svg>
+                className="absolute w-2 h-2 sm:w-2.5 sm:h-2.5"
+                style={{
+                  ...pos,
+                  background: accent,
+                  opacity: 0.25,
+                  transform: "rotate(45deg)",
+                } as React.CSSProperties}
+              />
             ))}
 
-            {/* Card content */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-6 sm:px-10 py-4 sm:py-6">
-              {/* Top divider */}
-              <div className="flex items-center gap-1.5 mb-2 sm:mb-3 opacity-0 animate-text-reveal" style={{ animationDelay: "0.8s" }}>
-                <div className="w-6 sm:w-8 h-px" style={{ background: `${accent}40` }} />
-                <div className="w-1 h-1 rounded-full" style={{ background: `${accent}50` }} />
-                <div className="w-6 sm:w-8 h-px" style={{ background: `${accent}40` }} />
+            {/* Card text */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-8 sm:px-12">
+              {/* Decorative line */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-[0.5px]" style={{ background: `${accent}50` }} />
+                <div className="w-1.5 h-1.5 rounded-full" style={{ background: `${accent}40` }} />
+                <div className="w-8 h-[0.5px]" style={{ background: `${accent}50` }} />
               </div>
 
               <p
-                className="text-[8px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] font-medium mb-1.5 sm:mb-2 opacity-0 animate-text-reveal"
-                style={{ color: `${primary}60`, animationDelay: "0.9s" }}
+                className="text-[9px] sm:text-[11px] uppercase tracking-[0.35em] font-medium mb-2"
+                style={{ color: `${primary}60` }}
               >
-                You are cordially invited to
+                You are cordially invited
               </p>
 
               <h1
-                className="font-display text-xl sm:text-3xl md:text-4xl font-bold leading-tight text-center opacity-0 animate-text-reveal"
-                style={{ color: primary, animationDelay: "1.0s" }}
+                className="font-display text-xl sm:text-2xl md:text-3xl font-bold leading-snug text-center"
+                style={{ color: primary }}
               >
                 {title}
               </h1>
 
               {subtitle && (
-                <p
-                  className="text-xs sm:text-sm mt-1.5 sm:mt-2 font-light italic opacity-0 animate-text-reveal"
-                  style={{ color: `${primary}80`, animationDelay: "1.2s" }}
-                >
+                <p className="text-[11px] sm:text-sm mt-2 font-light italic" style={{ color: `${primary}70` }}>
                   {subtitle}
                 </p>
               )}
 
-              {/* Bottom divider */}
-              <div className="flex items-center gap-1.5 mt-2 sm:mt-3 opacity-0 animate-text-reveal" style={{ animationDelay: "1.3s" }}>
-                <div className="w-5 sm:w-6 h-px" style={{ background: `${accent}30` }} />
-                <div className="w-1 h-1 rounded-full" style={{ background: `${accent}40` }} />
-                <div className="w-5 sm:w-6 h-px" style={{ background: `${accent}30` }} />
+              <div className="flex items-center gap-2 mt-3">
+                <div className="w-6 h-[0.5px]" style={{ background: `${accent}40` }} />
+                <div className="w-1 h-1 rounded-full" style={{ background: `${accent}35` }} />
+                <div className="w-6 h-[0.5px]" style={{ background: `${accent}40` }} />
               </div>
             </div>
           </div>
 
-          {/* === LEFT FOLD of envelope === */}
-          <div
-            className="absolute bottom-0 left-0"
-            style={{
-              width: "50%",
-              height: "100%",
-              zIndex: 3,
-              pointerEvents: "none",
-            }}
-          >
-            <svg viewBox="0 0 180 260" className="w-full h-full" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="leftFold" x1="100%" y1="50%" x2="0%" y2="50%">
-                  <stop offset="0%" stopColor={envelopeColor} stopOpacity="0.95" />
-                  <stop offset="100%" stopColor={envelopeDark} stopOpacity="1" />
-                </linearGradient>
-              </defs>
-              <path d="M0 0 L0 260 L180 130 Z" fill="url(#leftFold)" />
-              {/* Fold shadow line */}
-              <path d="M0 0 L180 130 L0 260" fill="none" stroke={`${primary}30`} strokeWidth="0.5" />
-            </svg>
-          </div>
-
-          {/* === RIGHT FOLD of envelope === */}
-          <div
-            className="absolute bottom-0 right-0"
-            style={{
-              width: "50%",
-              height: "100%",
-              zIndex: 3,
-              pointerEvents: "none",
-            }}
-          >
-            <svg viewBox="0 0 180 260" className="w-full h-full" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="rightFold" x1="0%" y1="50%" x2="100%" y2="50%">
-                  <stop offset="0%" stopColor={envelopeColor} stopOpacity="0.95" />
-                  <stop offset="100%" stopColor={envelopeDark} stopOpacity="1" />
-                </linearGradient>
-              </defs>
-              <path d="M180 0 L180 260 L0 130 Z" fill="url(#rightFold)" />
-              <path d="M180 0 L0 130 L180 260" fill="none" stroke={`${primary}30`} strokeWidth="0.5" />
-            </svg>
-          </div>
-
-          {/* === BOTTOM FOLD (front of envelope) === */}
-          <div
-            className="absolute bottom-0 left-0 right-0"
-            style={{
-              height: "55%",
-              zIndex: 4,
-              pointerEvents: "none",
-            }}
-          >
-            <svg viewBox="0 0 360 143" className="w-full h-full" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="bottomFold" x1="50%" y1="0%" x2="50%" y2="100%">
-                  <stop offset="0%" stopColor={envelopeLight} />
-                  <stop offset="100%" stopColor={envelopeColor} />
-                </linearGradient>
-              </defs>
-              <path d="M0 0 L180 130 L360 0 L360 143 L0 143 Z" fill="url(#bottomFold)" />
-              {/* Fold line */}
-              <path d="M0 0 L180 130 L360 0" fill="none" stroke={`${primary}40`} strokeWidth="0.5" />
-            </svg>
-          </div>
-
-          {/* === TOP FLAP (opens on click) === */}
+          {/* ─── ENVELOPE ─── */}
           <div
             className={cn(
-              "absolute top-0 left-0 right-0 origin-top",
-              opened ? "animate-flap-open" : ""
+              "absolute bottom-0 left-0 right-0 cursor-pointer",
+              stage === "closed" && "animate-envelope-enter",
+              stage === "closed" && "animate-gentle-float hover:scale-[1.015] transition-transform duration-300"
             )}
             style={{
-              height: "55%",
-              zIndex: opened ? 6 : 5,
-              pointerEvents: "none",
-              transformStyle: "preserve-3d",
-              perspective: "800px",
+              height: "min(250px, 58vw)",
+              zIndex: 5,
             }}
+            onClick={handleOpen}
           >
+            {/* Envelope shadow (separate for realistic effect) */}
             <div
-              className={cn(
-                "w-full h-full origin-top",
-                opened ? "animate-flap-open" : ""
-              )}
-            >
-              <svg viewBox="0 0 360 143" className="w-full h-full" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="topFlap" x1="50%" y1="100%" x2="50%" y2="0%">
-                    <stop offset="0%" stopColor={envelopeColor} />
-                    <stop offset="100%" stopColor={envelopeDark} />
-                  </linearGradient>
-                </defs>
-                <path d="M0 0 L360 0 L180 130 Z" fill="url(#topFlap)" />
-                {/* Inner fold lines for depth */}
-                <path d="M30 5 L180 110 L330 5" fill="none" stroke={`${primary}30`} strokeWidth="0.4" />
-                <path d="M60 8 L180 95 L300 8" fill="none" stroke={`${primary}15`} strokeWidth="0.3" />
-              </svg>
-            </div>
-          </div>
-
-          {/* === WAX SEAL (on top of bottom fold) === */}
-          <div
-            className={cn(
-              "absolute z-10",
-              opened ? "animate-seal-fade" : "animate-seal-glow"
-            )}
-            style={{
-              left: "50%",
-              bottom: "40%",
-              transform: "translate(-50%, 50%)",
-              zIndex: 7,
-            }}
-          >
-            <div
-              className="relative flex items-center justify-center"
+              className="absolute -bottom-3 left-[5%] right-[5%] h-8 rounded-[50%]"
               style={{
-                width: "clamp(44px, 7vw, 58px)",
-                height: "clamp(44px, 7vw, 58px)",
-                borderRadius: "50%",
-                background: `radial-gradient(circle at 35% 35%, ${primary}EE, ${primary})`,
-                boxShadow: `0 3px 12px ${primary}40`,
+                background: `radial-gradient(ellipse, ${primary}18 0%, transparent 70%)`,
+                filter: "blur(8px)",
+              }}
+            />
+
+            {/* Envelope body */}
+            <div
+              className="absolute inset-0 rounded-xl sm:rounded-2xl overflow-hidden"
+              style={{
+                background: primary,
+                boxShadow: `0 20px 50px ${primary}25`,
               }}
             >
-              {/* Seal rings */}
-              <div className="absolute rounded-full border" style={{ inset: "3px", borderColor: `${accent}50` }} />
-              <div className="absolute rounded-full border" style={{ inset: "6px", borderColor: `${accent}25` }} />
-              {/* Dots around seal */}
-              {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
-                <div
-                  key={deg}
-                  className="absolute w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full"
-                  style={{
-                    background: `${accent}40`,
-                    top: "50%",
-                    left: "50%",
-                    transform: `rotate(${deg}deg) translate(clamp(17px, 2.8vw, 23px)) translate(-50%, -50%)`,
-                  }}
-                />
-              ))}
-              {/* Seal monogram */}
-              <span
-                className="font-display font-bold relative z-10"
+              {/* Subtle texture/grain overlay */}
+              <div
+                className="absolute inset-0"
                 style={{
-                  color: accent,
-                  fontSize: "clamp(14px, 2vw, 18px)",
-                  letterSpacing: "0.05em",
+                  background: `linear-gradient(175deg, rgba(255,255,255,0.08) 0%, transparent 30%, rgba(0,0,0,0.06) 100%)`,
+                }}
+              />
+
+              {/* Inner lining (shows when flap opens) */}
+              <div
+                className="absolute top-0 left-0 right-0 rounded-t-xl sm:rounded-t-2xl overflow-hidden transition-opacity duration-700"
+                style={{
+                  height: "45%",
+                  opacity: isOpening ? 1 : 0,
                 }}
               >
-                {title.split(" ").map(w => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "FP"}
-              </span>
+                {/* Lining: elegant gradient pattern instead of drawn flowers */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(135deg, ${bg} 0%, ${accent}18 25%, ${bg} 50%, ${accent}18 75%, ${bg} 100%)`,
+                  }}
+                />
+                {/* Ornamental border on lining */}
+                <div className="absolute inset-2 rounded-lg" style={{ border: `0.5px solid ${accent}30` }} />
+              </div>
+
+              {/* Diagonal fold lines */}
+              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 380 250" fill="none" preserveAspectRatio="none">
+                {/* Bottom front V-fold */}
+                <path d="M0 250 L190 105 L380 250 Z" fill={primary} />
+                {/* Slight lighter shade on front fold for depth */}
+                <path d="M0 250 L190 105 L380 250 Z" fill="rgba(255,255,255,0.04)" />
+                {/* Fold crease lines */}
+                <path d="M0 250 L190 105 L380 250" stroke={`${accent}15`} strokeWidth="0.5" fill="none" />
+                <path d="M0 0 L190 135" stroke={`${accent}08`} strokeWidth="0.3" />
+                <path d="M380 0 L190 135" stroke={`${accent}08`} strokeWidth="0.3" />
+              </svg>
+
+              {/* "You are invited" text on envelope */}
+              <div
+                className="absolute inset-0 flex items-center justify-center opacity-0 animate-text-reveal"
+                style={{ animationDelay: "0.8s", zIndex: 3 }}
+              >
+                <div className="text-center" style={{ marginTop: "-12%" }}>
+                  <p
+                    className="font-display text-lg sm:text-2xl italic font-light"
+                    style={{ color: `${accent}BB` }}
+                  >
+                    You are invited!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* ─── TOP FLAP ─── */}
+            <div
+              className="absolute -top-px left-0 right-0 origin-top"
+              style={{
+                height: "54%",
+                zIndex: isOpening ? 0 : 6,
+                perspective: "1200px",
+                pointerEvents: "none",
+              }}
+            >
+              <div
+                className="w-full h-full origin-top"
+                style={{
+                  transform: isOpening ? "rotateX(-180deg)" : "rotateX(0deg)",
+                  transition: "transform 0.65s cubic-bezier(0.4, 0, 0.2, 1)",
+                  backfaceVisibility: "hidden",
+                }}
+              >
+                <svg viewBox="0 0 380 135" className="w-full h-full" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="flapG" x1="50%" y1="100%" x2="50%" y2="0%">
+                      <stop offset="0%" stopColor={primary} />
+                      <stop offset="80%" stopColor={primary} stopOpacity="0.92" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M0 0 L380 0 L190 128 Z" fill="url(#flapG)" />
+                  <path d="M2 1 L190 126 L378 1" stroke={`${accent}12`} strokeWidth="0.4" fill="none" />
+                </svg>
+              </div>
+            </div>
+
+            {/* ─── WAX SEAL (gold) ─── */}
+            <div
+              className="absolute transition-all duration-500"
+              style={{
+                left: "50%",
+                top: 0,
+                transform: `translate(-50%, -42%) scale(${isOpening ? 0 : 1})`,
+                opacity: isOpening ? 0 : 1,
+                zIndex: 20,
+              }}
+            >
+              <div
+                className={cn(stage === "closed" && "animate-seal-glow")}
+                style={{
+                  width: "clamp(52px, 8vw, 68px)",
+                  height: "clamp(52px, 8vw, 68px)",
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle at 36% 36%, #EDD48E, #C9A24D, #9E7A2A)",
+                  boxShadow: "0 5px 20px rgba(170, 130, 40, 0.45), inset 0 1px 3px rgba(255,255,255,0.25)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                }}
+              >
+                {/* Inner rings */}
+                <div className="absolute rounded-full" style={{ inset: "4px", border: "1px solid rgba(255,255,255,0.22)" }} />
+                <div className="absolute rounded-full" style={{ inset: "8px", border: "0.5px solid rgba(255,255,255,0.1)" }} />
+
+                {/* Scalloped edge dots */}
+                {[...Array(16)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute"
+                    style={{
+                      width: "2.5px",
+                      height: "2.5px",
+                      borderRadius: "50%",
+                      background: "rgba(255,255,255,0.12)",
+                      top: "50%",
+                      left: "50%",
+                      transform: `rotate(${i * 22.5}deg) translate(clamp(21px, 3.4vw, 28px)) translate(-50%, -50%)`,
+                    }}
+                  />
+                ))}
+
+                {/* Monogram */}
+                <span
+                  className="font-display font-bold relative z-10"
+                  style={{
+                    color: "#FFF5D6",
+                    fontSize: "clamp(16px, 2.3vw, 22px)",
+                    letterSpacing: "0.06em",
+                    textShadow: "0 1px 2px rgba(100,70,10,0.35)",
+                  }}
+                >
+                  {monogram}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom call to action */}
-        <div className="mt-8 sm:mt-10 opacity-0 animate-text-reveal" style={{ animationDelay: "1.6s" }}>
+        {/* CTA text */}
+        <div className="opacity-0 animate-text-reveal" style={{ animationDelay: "1.4s", marginTop: "12px" }}>
           <p
-            className="text-xs sm:text-sm font-medium animate-pulse"
-            style={{ color: `${primary}60` }}
+            className="text-[11px] sm:text-sm tracking-widest uppercase font-medium"
+            style={{ color: `${primary}45` }}
           >
-            Tap the envelope to open
+            <span className="animate-pulse inline-block">Click to open</span>
           </p>
         </div>
       </div>
