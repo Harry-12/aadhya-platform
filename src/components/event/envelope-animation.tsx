@@ -24,7 +24,7 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
   const handleOpen = () => {
     if (opened) return;
     setOpened(true);
-    setTimeout(onOpen, 1400);
+    setTimeout(onOpen, 1500);
   };
 
   return (
@@ -32,102 +32,163 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
       className="fixed inset-0 z-50 flex items-center justify-center select-none"
       style={{ background: bg }}
     >
-      {/* The greeting card */}
+      {/* Greeting card wrapper with 3D perspective */}
       <div
         className="relative cursor-pointer"
         style={{
-          width: "min(320px, 75vw)",
-          height: "min(440px, 100vw)",
-          perspective: "1200px",
+          width: "min(360px, 80vw)",
+          height: "min(260px, 58vw)",
+          perspective: "1000px",
           opacity: entered ? 1 : 0,
-          transform: entered ? "translateY(0)" : "translateY(30px)",
+          transform: entered ? "translateY(0)" : "translateY(25px)",
           transition: "opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s",
         }}
         onClick={handleOpen}
       >
-        {/* Card shadow on the surface */}
+        {/* Surface shadow */}
         <div
-          className="absolute -bottom-4 left-[10%] right-[10%] h-8 rounded-[50%]"
+          className="absolute left-[5%] right-[5%] h-6"
           style={{
-            background: `radial-gradient(ellipse, ${primary}20 0%, transparent 70%)`,
-            filter: "blur(8px)",
+            bottom: "-14px",
+            background: `radial-gradient(ellipse, ${primary}18 0%, transparent 70%)`,
+            filter: "blur(6px)",
+            opacity: opened ? 0.3 : 1,
             transition: "opacity 0.8s ease",
-            opacity: opened ? 0 : 1,
           }}
         />
 
-        {/* Right side of card (stays in place - this is the "back" page visible when opened) */}
+        {/* ── BACK PAGE (right half, stays flat) ── */}
         <div
-          className="absolute inset-0 rounded-r-2xl overflow-hidden"
+          className="absolute top-0 right-0 rounded-r-lg overflow-hidden"
           style={{
-            background: primary,
-            boxShadow: `0 8px 40px ${primary}20`,
+            width: "50%",
+            height: "100%",
+            background: bg,
+            boxShadow: `inset 2px 0 8px ${primary}08`,
           }}
         >
-          {/* Subtle gradient for depth */}
+          {/* Inside right page - blank cream/white */}
+          <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${bg} 0%, #fff 100%)` }} />
+        </div>
+
+        {/* ── BACK COVER (left half behind, visible as the card spine area) ── */}
+        <div
+          className="absolute top-0 left-0 rounded-l-lg overflow-hidden"
+          style={{
+            width: "50%",
+            height: "100%",
+            background: primary,
+            boxShadow: `0 4px 20px ${primary}15`,
+          }}
+        >
+          <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.03) 0%, rgba(255,255,255,0.05) 100%)" }} />
+        </div>
+
+        {/* ── FRONT COVER (right half, swings open to the left) ── */}
+        <div
+          className="absolute top-0 rounded-r-lg overflow-hidden"
+          style={{
+            left: "50%",
+            width: "50%",
+            height: "100%",
+            transformOrigin: "left center",
+            transform: opened ? "rotateY(-170deg)" : "rotateY(0deg)",
+            transition: "transform 1.1s cubic-bezier(0.4, 0, 0.2, 1)",
+            transformStyle: "preserve-3d",
+            zIndex: 3,
+          }}
+        >
+          {/* Front face */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 rounded-r-lg"
             style={{
-              background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%, rgba(0,0,0,0.04) 100%)",
+              backfaceVisibility: "hidden",
+              background: primary,
+              boxShadow: opened ? "none" : `4px 4px 20px ${primary}20`,
+            }}
+          >
+            {/* Subtle light gradient for paper feel */}
+            <div
+              className="absolute inset-0 rounded-r-lg"
+              style={{
+                background: "linear-gradient(145deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(0,0,0,0.04) 100%)",
+              }}
+            />
+            {/* Spine edge shadow */}
+            <div
+              className="absolute top-0 bottom-0 left-0 w-2"
+              style={{ background: `linear-gradient(90deg, rgba(0,0,0,0.1) 0%, transparent 100%)` }}
+            />
+          </div>
+
+          {/* Back face (inside left page when opened) */}
+          <div
+            className="absolute inset-0 rounded-l-lg"
+            style={{
+              backfaceVisibility: "hidden",
+              transform: "rotateY(180deg)",
+              background: `linear-gradient(135deg, ${bg} 0%, #fff 100%)`,
             }}
           />
         </div>
 
-        {/* Left cover of the card (opens like a book) */}
+        {/* ── FRONT COVER LEFT HALF (the left side of the closed card) ── */}
         <div
-          className="absolute inset-0 origin-left rounded-2xl overflow-hidden"
+          className="absolute top-0 left-0 rounded-l-lg overflow-hidden"
           style={{
-            background: primary,
-            boxShadow: opened
-              ? `5px 0 20px ${primary}15`
-              : `0 8px 40px ${primary}25`,
-            transform: opened ? "rotateY(-160deg)" : "rotateY(0deg)",
-            transition: "transform 1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s ease",
+            width: "50%",
+            height: "100%",
+            transformOrigin: "right center",
+            transform: opened ? "rotateY(170deg)" : "rotateY(0deg)",
+            transition: "transform 1.1s cubic-bezier(0.4, 0, 0.2, 1) 0.05s",
             transformStyle: "preserve-3d",
-            zIndex: 2,
+            zIndex: 4,
           }}
         >
-          {/* Front face of the cover - completely plain */}
+          {/* Front face */}
           <div
-            className="absolute inset-0"
-            style={{ backfaceVisibility: "hidden" }}
+            className="absolute inset-0 rounded-l-lg"
+            style={{
+              backfaceVisibility: "hidden",
+              background: primary,
+              boxShadow: opened ? "none" : `-2px 4px 20px ${primary}15`,
+            }}
           >
-            {/* Subtle gradient for a premium paper feel */}
             <div
-              className="absolute inset-0 rounded-2xl"
+              className="absolute inset-0 rounded-l-lg"
               style={{
-                background: `linear-gradient(155deg, rgba(255,255,255,0.1) 0%, transparent 35%, rgba(0,0,0,0.05) 100%)`,
+                background: "linear-gradient(215deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(0,0,0,0.04) 100%)",
               }}
             />
-
-            {/* Very subtle spine shadow on the left edge */}
+            {/* Spine edge shadow on right */}
             <div
-              className="absolute top-0 bottom-0 left-0 w-3"
-              style={{
-                background: `linear-gradient(90deg, rgba(0,0,0,0.08) 0%, transparent 100%)`,
-                borderRadius: "2xl 0 0 2xl",
-              }}
+              className="absolute top-0 bottom-0 right-0 w-2"
+              style={{ background: `linear-gradient(270deg, rgba(0,0,0,0.1) 0%, transparent 100%)` }}
             />
           </div>
 
-          {/* Back face of the cover (inside left page - visible when opened) */}
+          {/* Back face (inside right page when opened) */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 rounded-r-lg"
             style={{
               backfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
-              background: bg,
+              background: `linear-gradient(225deg, ${bg} 0%, #fff 100%)`,
             }}
-          >
-            {/* Very subtle inner texture */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `linear-gradient(135deg, transparent 0%, ${accent}08 50%, transparent 100%)`,
-              }}
-            />
-          </div>
+          />
         </div>
+
+        {/* Center fold line (visible crease) */}
+        <div
+          className="absolute top-0 bottom-0 z-10"
+          style={{
+            left: "calc(50% - 0.5px)",
+            width: "1px",
+            background: `linear-gradient(180deg, ${primary}30, ${primary}50, ${primary}30)`,
+            opacity: opened ? 0 : 1,
+            transition: "opacity 0.5s ease",
+          }}
+        />
       </div>
     </div>
   );
