@@ -26,6 +26,9 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
     setTimeout(onOpen, 800);
   };
 
+  // Envelope dimensions
+  const envWidth = "min(360px, 85vw)";
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center select-none"
@@ -35,128 +38,168 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
         transition: "opacity 0.7s ease",
       }}
     >
-      {/* Subtle pattern overlay */}
+      {/* Subtle light overlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(circle at 20% 30%, ${accent}15 0%, transparent 50%), radial-gradient(circle at 80% 70%, ${accent}10 0%, transparent 40%)`,
+          backgroundImage: `radial-gradient(circle at 30% 20%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 70% 80%, ${accent}12 0%, transparent 40%)`,
         }}
       />
 
-      {/* The invitation card */}
+      {/* Envelope container */}
       <div
         className="relative cursor-pointer"
         onClick={handleOpen}
         style={{
-          width: "min(340px, 80vw)",
+          width: envWidth,
           opacity: entered ? 1 : 0,
-          transform: entered ? "translateY(0)" : "translateY(30px)",
-          transition: "opacity 1s ease 0.2s, transform 1s ease 0.2s",
+          transform: entered ? "translateY(0) scale(1)" : "translateY(40px) scale(0.95)",
+          transition: "opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s",
         }}
       >
-        {/* Card shadow */}
+        {/* Shadow under envelope */}
         <div
-          className="absolute -bottom-4 left-[6%] right-[6%] h-8 rounded-[50%]"
+          className="absolute -bottom-5 left-[8%] right-[8%] h-8 rounded-[50%]"
           style={{
-            background: `radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 70%)`,
-            filter: "blur(8px)",
+            background: `radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%)`,
+            filter: "blur(10px)",
           }}
         />
 
-        {/* Main card */}
-        <div
-          className="relative rounded-xl overflow-hidden"
+        {/* SVG Envelope shape */}
+        <svg
+          viewBox="0 0 360 280"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-auto relative z-10 drop-shadow-2xl"
           style={{
-            background: "#FFFDF9",
-            boxShadow: `0 4px 16px rgba(0,0,0,0.1), 0 12px 40px rgba(0,0,0,0.15)`,
-            aspectRatio: "5 / 7",
+            filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.15))",
           }}
         >
-          {/* Card content */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-10 sm:px-14">
-            {/* Envelope icon at the top */}
-            <div className="mb-6">
-              <svg
-                width="56"
-                height="42"
-                viewBox="0 0 56 42"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* Envelope body */}
-                <rect
-                  x="1"
-                  y="1"
-                  width="54"
-                  height="40"
-                  rx="4"
-                  stroke={primary}
-                  strokeWidth="1.5"
-                  fill={`${primary}08`}
-                />
-                {/* Envelope flap - left line */}
-                <path
-                  d="M1 1L28 24"
-                  stroke={primary}
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                {/* Envelope flap - right line */}
-                <path
-                  d="M55 1L28 24"
-                  stroke={primary}
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                {/* Small heart in center */}
-                <path
-                  d="M28 18.5C28 18.5 24 14.5 24 12.5C24 11 25.5 10 27 11C27.6 11.4 28 12 28 12C28 12 28.4 11.4 29 11C30.5 10 32 11 32 12.5C32 14.5 28 18.5 28 18.5Z"
-                  fill={accent}
-                  opacity="0.7"
-                />
-              </svg>
-            </div>
+          {/* Envelope body - rounded rectangle */}
+          <rect
+            x="0"
+            y="60"
+            width="360"
+            height="220"
+            rx="12"
+            fill="#FFFDF9"
+          />
 
-            {/* "You are invited to" */}
+          {/* Envelope flap (triangle) */}
+          <path
+            d="M0 72 L180 170 L360 72 L360 60 Q360 48 348 48 L12 48 Q0 48 0 60 Z"
+            fill="#FFF8F0"
+          />
+          {/* Flap fold line shadow */}
+          <path
+            d="M4 72 L180 166 L356 72"
+            stroke={`${primary}15`}
+            strokeWidth="1"
+            fill="none"
+          />
+
+          {/* Inner card area with slight inset look */}
+          <rect
+            x="24"
+            y="90"
+            width="312"
+            height="176"
+            rx="6"
+            fill="none"
+            stroke={`${accent}20`}
+            strokeWidth="0.75"
+          />
+        </svg>
+
+        {/* Content overlay positioned on the envelope body */}
+        <div
+          className="absolute left-0 right-0 flex flex-col items-center justify-center px-12 sm:px-16"
+          style={{
+            top: "38%",
+            bottom: "4%",
+          }}
+        >
+          {/* Small envelope icon */}
+          <div className="mb-4">
+            <svg
+              width="32"
+              height="24"
+              viewBox="0 0 32 24"
+              fill="none"
+            >
+              <rect x="0.5" y="0.5" width="31" height="23" rx="3" stroke={accent} strokeWidth="0.8" fill="none" />
+              <path d="M0.5 0.5L16 14L31.5 0.5" stroke={accent} strokeWidth="0.8" />
+            </svg>
+          </div>
+
+          {/* "You are invited to" */}
+          <p
+            className="text-[9px] sm:text-[11px] uppercase tracking-[0.35em] font-medium mb-3"
+            style={{ color: `${primary}70` }}
+          >
+            You are invited to
+          </p>
+
+          {/* Event title */}
+          <h1
+            className="font-display text-xl sm:text-2xl font-bold leading-snug text-center mb-2"
+            style={{ color: primary }}
+          >
+            {title}
+          </h1>
+
+          {/* Subtitle */}
+          {subtitle && (
             <p
-              className="text-[10px] sm:text-xs uppercase tracking-[0.35em] font-medium mb-4"
-              style={{ color: `${primary}80` }}
+              className="text-xs sm:text-sm font-light italic mb-3"
+              style={{ color: `${primary}60` }}
             >
-              You are invited to
+              {subtitle}
             </p>
+          )}
 
-            {/* Event title */}
-            <h1
-              className="font-display text-2xl sm:text-3xl font-bold leading-snug text-center mb-3"
-              style={{ color: primary }}
-            >
-              {title}
-            </h1>
+          {/* Divider */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-6 h-px" style={{ background: `${accent}45` }} />
+            <div className="w-1 h-1" style={{ background: `${accent}50`, transform: "rotate(45deg)" }} />
+            <div className="w-6 h-px" style={{ background: `${accent}45` }} />
+          </div>
 
-            {/* Subtitle */}
-            {subtitle && (
-              <p
-                className="text-sm font-light italic mb-4"
-                style={{ color: `${primary}65` }}
-              >
-                {subtitle}
-              </p>
-            )}
+          {/* Tap to open */}
+          <p
+            className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] font-medium"
+            style={{ color: accent }}
+          >
+            Tap to open
+          </p>
+        </div>
 
-            {/* Small divider */}
-            <div className="flex items-center gap-2 mb-5">
-              <div className="w-8 h-px" style={{ background: `${accent}50` }} />
-              <div className="w-1.5 h-1.5" style={{ background: `${accent}50`, transform: "rotate(45deg)" }} />
-              <div className="w-8 h-px" style={{ background: `${accent}50` }} />
-            </div>
-
-            {/* Tap to open */}
-            <p
-              className="text-[10px] uppercase tracking-[0.3em] font-medium"
-              style={{ color: `${accent}` }}
-            >
-              Tap to open
-            </p>
+        {/* Wax seal on the flap */}
+        <div
+          className="absolute z-20"
+          style={{
+            top: "28%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <div
+            className="rounded-full flex items-center justify-center"
+            style={{
+              width: "36px",
+              height: "36px",
+              background: `radial-gradient(circle at 40% 35%, ${primary}EE, ${primary})`,
+              boxShadow: `0 2px 8px ${primary}50, inset 0 1px 2px rgba(255,255,255,0.2)`,
+            }}
+          >
+            {/* Heart on seal */}
+            <svg width="14" height="13" viewBox="0 0 14 13" fill="none">
+              <path
+                d="M7 12C7 12 1 8 1 4.5C1 2.5 3 1 5 2.5C5.8 3.1 6.5 4 7 4.5C7.5 4 8.2 3.1 9 2.5C11 1 13 2.5 13 4.5C13 8 7 12 7 12Z"
+                fill="rgba(255,255,255,0.85)"
+              />
+            </svg>
           </div>
         </div>
       </div>
