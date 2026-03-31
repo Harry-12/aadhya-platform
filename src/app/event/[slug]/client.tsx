@@ -271,19 +271,19 @@ export default function EventPageClient({ event }: EventPageClientProps) {
                 </div>
               </div>
               <div className="mt-8 flex flex-wrap justify-center gap-3 animate-slide-up">
-                <span className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg">
+                <a href="#rsvp" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg cursor-pointer hover:bg-white/20 transition-colors">
                   <CalendarIcon size={16} />
                   {formatDate(event.date)}
-                </span>
-                <span className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg">
+                </a>
+                <a href="#rsvp" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg cursor-pointer hover:bg-white/20 transition-colors">
                   <ClockIcon size={16} />
                   {formatTime(event.time)}{event.end_time ? ` – ${formatTime(event.end_time)}` : ""}
-                </span>
+                </a>
                 {event.venue && (
-                  <span className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg">
+                  <a href="#directions" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white text-sm font-medium shadow-lg cursor-pointer hover:bg-white/20 transition-colors">
                     <MapPinIcon size={16} />
                     {event.venue}
-                  </span>
+                  </a>
                 )}
               </div>
               <PaisleyBorder position="bottom" className="mt-10" />
