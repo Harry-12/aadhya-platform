@@ -14,7 +14,6 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
   const [entered, setEntered] = useState(false);
   const primary = theme?.primary || "#8B1A1A";
   const accent = theme?.accent || "#D4A574";
-  const bg = theme?.background || "#FFF8F0";
 
   useEffect(() => {
     const t = setTimeout(() => setEntered(true), 100);
@@ -31,74 +30,97 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
     <div
       className="fixed inset-0 z-50 flex items-center justify-center select-none"
       style={{
-        background: `linear-gradient(160deg, ${primary}0C 0%, ${bg} 50%, ${accent}0A 100%)`,
+        background: `linear-gradient(145deg, ${primary} 0%, ${primary}DD 40%, ${primary}BB 70%, ${accent}90 100%)`,
         opacity: fadeOut ? 0 : 1,
         transition: "opacity 0.7s ease",
       }}
     >
+      {/* Subtle pattern overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(circle at 20% 30%, ${accent}15 0%, transparent 50%), radial-gradient(circle at 80% 70%, ${accent}10 0%, transparent 40%)`,
+        }}
+      />
+
       {/* The invitation card */}
       <div
         className="relative cursor-pointer"
         onClick={handleOpen}
         style={{
-          width: "min(380px, 82vw)",
+          width: "min(340px, 80vw)",
           opacity: entered ? 1 : 0,
-          transform: entered
-            ? "perspective(800px) rotateY(-2deg) rotateX(1deg)"
-            : "perspective(800px) rotateY(-2deg) rotateX(1deg) translateY(30px)",
+          transform: entered ? "translateY(0)" : "translateY(30px)",
           transition: "opacity 1s ease 0.2s, transform 1s ease 0.2s",
         }}
       >
         {/* Card shadow */}
         <div
-          className="absolute -bottom-3 left-[8%] right-[4%] h-6 rounded-[50%]"
+          className="absolute -bottom-4 left-[6%] right-[6%] h-8 rounded-[50%]"
           style={{
-            background: `radial-gradient(ellipse, rgba(0,0,0,0.12) 0%, transparent 70%)`,
-            filter: "blur(6px)",
+            background: `radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 70%)`,
+            filter: "blur(8px)",
           }}
         />
 
         {/* Main card */}
         <div
-          className="relative rounded-lg overflow-hidden"
+          className="relative rounded-xl overflow-hidden"
           style={{
-            background: "#FEFCF9",
-            boxShadow: `
-              0 2px 8px rgba(0,0,0,0.06),
-              0 8px 24px rgba(0,0,0,0.08),
-              0 20px 48px ${primary}10
-            `,
+            background: "#FFFDF9",
+            boxShadow: `0 4px 16px rgba(0,0,0,0.1), 0 12px 40px rgba(0,0,0,0.15)`,
             aspectRatio: "5 / 7",
           }}
         >
-          {/* Thin top accent line */}
-          <div
-            className="absolute top-0 left-0 right-0"
-            style={{ height: "3px", background: primary }}
-          />
-
-          {/* Inner border */}
-          <div
-            className="absolute rounded"
-            style={{
-              inset: "16px",
-              border: `1px solid ${accent}25`,
-            }}
-          />
-
           {/* Card content */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-10 sm:px-14 py-12">
-            {/* Top decorative element */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-px" style={{ background: `${accent}50` }} />
-              <div className="w-1.5 h-1.5" style={{ background: `${accent}45`, transform: "rotate(45deg)" }} />
-              <div className="w-10 h-px" style={{ background: `${accent}50` }} />
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-10 sm:px-14">
+            {/* Envelope icon at the top */}
+            <div className="mb-6">
+              <svg
+                width="56"
+                height="42"
+                viewBox="0 0 56 42"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Envelope body */}
+                <rect
+                  x="1"
+                  y="1"
+                  width="54"
+                  height="40"
+                  rx="4"
+                  stroke={primary}
+                  strokeWidth="1.5"
+                  fill={`${primary}08`}
+                />
+                {/* Envelope flap - left line */}
+                <path
+                  d="M1 1L28 24"
+                  stroke={primary}
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                {/* Envelope flap - right line */}
+                <path
+                  d="M55 1L28 24"
+                  stroke={primary}
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                {/* Small heart in center */}
+                <path
+                  d="M28 18.5C28 18.5 24 14.5 24 12.5C24 11 25.5 10 27 11C27.6 11.4 28 12 28 12C28 12 28.4 11.4 29 11C30.5 10 32 11 32 12.5C32 14.5 28 18.5 28 18.5Z"
+                  fill={accent}
+                  opacity="0.7"
+                />
+              </svg>
             </div>
 
             {/* "You are invited to" */}
             <p
-              className="text-[10px] sm:text-xs uppercase tracking-[0.4em] font-medium mb-5"
-              style={{ color: `${primary}70` }}
+              className="text-[10px] sm:text-xs uppercase tracking-[0.35em] font-medium mb-4"
+              style={{ color: `${primary}80` }}
             >
               You are invited to
             </p>
@@ -114,8 +136,8 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
             {/* Subtitle */}
             {subtitle && (
               <p
-                className="text-sm font-light italic mb-5"
-                style={{ color: `${primary}70` }}
+                className="text-sm font-light italic mb-4"
+                style={{ color: `${primary}65` }}
               >
                 {subtitle}
               </p>
@@ -123,25 +145,19 @@ export function EnvelopeAnimation({ title, subtitle, onOpen, theme }: EnvelopeAn
 
             {/* Small divider */}
             <div className="flex items-center gap-2 mb-5">
-              <div className="w-6 h-px" style={{ background: `${accent}40` }} />
-              <div className="w-1 h-1 rounded-full" style={{ background: `${accent}40` }} />
-              <div className="w-6 h-px" style={{ background: `${accent}40` }} />
+              <div className="w-8 h-px" style={{ background: `${accent}50` }} />
+              <div className="w-1.5 h-1.5" style={{ background: `${accent}50`, transform: "rotate(45deg)" }} />
+              <div className="w-8 h-px" style={{ background: `${accent}50` }} />
             </div>
 
             {/* Tap to open */}
             <p
               className="text-[10px] uppercase tracking-[0.3em] font-medium"
-              style={{ color: `${accent}90` }}
+              style={{ color: `${accent}` }}
             >
               Tap to open
             </p>
           </div>
-
-          {/* Thin bottom accent line */}
-          <div
-            className="absolute bottom-0 left-0 right-0"
-            style={{ height: "3px", background: primary }}
-          />
         </div>
       </div>
     </div>
