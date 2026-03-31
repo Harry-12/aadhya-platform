@@ -37,8 +37,8 @@ const config: Config = {
       keyframes: {
         floatDown: {
           "0%": { transform: "translateY(-20px) rotate(0deg)", opacity: "0" },
-          "10%": { opacity: "0.3" },
-          "90%": { opacity: "0.3" },
+          "10%": { opacity: "0.7" },
+          "80%": { opacity: "0.6" },
           "100%": { transform: "translateY(100vh) rotate(360deg)", opacity: "0" },
         },
         confettiFall: {

@@ -24,7 +24,7 @@ export function FloatingPetals({ count = 12 }: { count?: number }) {
         x: Math.random() * 100,
         delay: Math.random() * 8,
         duration: 8 + Math.random() * 12,
-        size: 6 + Math.random() * 10,
+        size: 8 + Math.random() * 14,
         color: PETAL_COLORS[i % PETAL_COLORS.length],
         rotation: Math.random() * 360,
       }))
@@ -49,7 +49,7 @@ export function FloatingPetals({ count = 12 }: { count?: number }) {
             viewBox="0 0 10 13"
             style={{ transform: `rotate(${p.rotation}deg)` }}
           >
-            <ellipse cx="5" cy="6.5" rx="4" ry="6" fill={p.color} opacity="0.15" />
+            <ellipse cx="5" cy="6.5" rx="4" ry="6" fill={p.color} opacity="0.5" />
           </svg>
         </div>
       ))}
